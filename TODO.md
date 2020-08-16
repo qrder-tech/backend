@@ -3,8 +3,8 @@
 * * REST API
 * * Middlewares
 * Babel `--exec babel-node --presets @babel/preset-env`
-* * ES6 `@babel/cli @babel/core @babel/node @babel/preset/env`
-* Confing
+* * ES6 `@babel/cli @babel/core @babel/node @babel/preset-env`
+* Config
 * * Dotenv
 * Sequelize `sequelize` - `sequelize-cli`
 * * Migration `npx sequelize-cli model:generate --name Sample --attributes firstName:string,lastName:string,email:string`
@@ -13,6 +13,7 @@
 * Authentication
 * * PassportJS `passport`
 * * JWT `passport-jwt jsonwebtoken`
+* SendGrid
 * Swagger
 * Scripts
 * * Lint `eslint eslint-config-airbnb-base eslint-plugin-import`

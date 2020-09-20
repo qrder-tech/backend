@@ -14,8 +14,8 @@
 * * PassportJS `passport`
 * * JWT `passport-jwt jsonwebtoken`
 * SendGrid
-* Swagger
 * Scripts
 * * Lint `eslint eslint-config-airbnb-base eslint-plugin-import`
 * * Test
 * * Pre-push
+* Docker

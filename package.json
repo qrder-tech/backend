@@ -24,7 +24,7 @@
   },
   "husky": {
     "hooks": {
-      "pre-push": "yarn lint-fix && scripts:all && yarn test"
+      "pre-push": "yarn lint-fix && yarn scripts:all && yarn test"
     }
   },
   "dependencies": {

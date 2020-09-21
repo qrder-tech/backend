@@ -1,0 +1,64 @@
+{
+  "name": "backend",
+  "engines": {
+    "node": "12.18.3"
+  },
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "start": "nodemon -L ./src/server.js --watch src --exec babel-node",
+    "build": "babel ./bin/www -d dist/",
+    "clean": "rm -r node_modules/",
+    "-- DATABASE_SCRIPTS --": "------------------------------------------------",
+    "db:mock-setup": "npx sequelize-cli db:migrate:undo:all && npx sequelize-cli db:migrate && npx sequelize-cli db:seed:all && echo DB SETUP COMPLETE!",
+    "-- CONTAINER_SCRIPTS --": "-----------------------------------------------",
+    "container:start": "docker-compose up --build --force-recreate -d && docker-compose logs -f",
+    "container:setup": "npm run container:web-exec -- \"npm run db:mock-setup\"",
+    "container:list": "docker ps",
+    "container:web-exec": "sh -c 'docker exec -i $(docker ps --filter name=qrder_web -q) $1' sh",
+    "-- RULE_ENFORCING --": "--------------------------------------------------",
+    "lint": "./node_modules/.bin/eslint src/ scripts/",
+    "lint-fix": "./node_modules/.bin/eslint --fix src/ scripts/",
+    "scripts:all": "node ./scripts",
+    "test": "jest test/"
+  },
+  "husky": {
+    "hooks": {
+      "pre-push": "yarn lint-fix && scripts:all && yarn test"
+    }
+  },
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "cookie-parser": "~1.4.4",
+    "cors": "^2.8.5",
+    "debug": "~2.6.9",
+    "dotenv": "^8.2.0",
+    "express": "~4.16.1",
+    "http-errors": "~1.6.3",
+    "jsonwebtoken": "^8.5.1",
+    "lodash": "^4.17.20",
+    "md5": "^2.3.0",
+    "moment": "^2.28.0",
+    "morgan": "~1.9.1",
+    "mysql2": "^2.2.1",
+    "passport": "^0.4.1",
+    "passport-jwt": "^4.0.0",
+    "pug": "2.0.0-beta11",
+    "sequelize": "^6.3.5",
+    "uuid": "^8.3.0",
+    "validator": "^13.1.17"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.11.6",
+    "@babel/node": "^7.10.5",
+    "@babel/preset-env": "^7.11.5",
+    "eslint": "^7.9.0",
+    "eslint-config-airbnb-base": "^14.2.0",
+    "eslint-config-prettier": "^6.11.0",
+    "eslint-plugin-import": "^2.22.0",
+    "husky": "^4.3.0",
+    "jest": "^26.4.2",
+    "nodemon": "^2.0.4",
+    "sequelize-cli": "^6.2.0"
+  }
+}

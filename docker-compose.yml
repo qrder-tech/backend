@@ -1,0 +1,25 @@
+version: "3.3"
+services: 
+  db: 
+    container_name: qrder_db
+    environment:
+      MYSQL_ROOT_PASSWORD: bilkent
+      MYSQL_DATABASE: qrder_api
+    image: mysql:5.7
+    networks: 
+      - default
+    restart: always
+  web: 
+    container_name: qrder_web
+    build:
+      context: ./
+    depends_on: 
+      - db
+    networks: 
+      - default
+    ports: 
+      - "5000:5000"
+    volumes: 
+      - ./:/usr/src/app
+networks: 
+  default:

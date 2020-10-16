@@ -47,6 +47,7 @@ qrder_web | 🔷 NODE_ENV: development
 qrder_web | 🚀 Server ready at http://localhost:5000
 qrder_web | Executing (default): SELECT 1+1 AS result
 qrder_web | 📚 Database connection has been established successfully
+qrder_web | 🐇 Client is connected to MQTT broker as 'qrder-server'
 ```
 
 ## 5. Setup database
@@ -71,3 +72,12 @@ yarn sequelize-cli model:generate --name Sample --attributes name:string,surname
 yarn sequelize-cli seed:generate --name Sample
 ```
 
+## 7. Deploy
+* All set! Go to [heroku dashboard](https://dashboard.heroku.com) -- you should see list of your apps.
+* Open the control panel of the app that corresponding to qrder_web project.
+* Enter to the `Settings` menu.
+* Setup `Config Vars` of the project properly. [For details](CONFIG_VARS.md)
+* Enter to the `Deploy` menu.
+* Check whether automatic deploy is enabled. -- if not:
+* * Choose a branch that you want to deploy to heroku and press `Enable Automatic Deploys` button. Or,
+* * Use the `Manual deploy` option.

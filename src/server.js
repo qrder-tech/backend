@@ -10,7 +10,7 @@ import path from "path";
 import authenticationMiddleware from "./lib/auth/middleware";
 import JwtPassportStrategy from "./lib/auth/jwt-strategy";
 import { initializeRoutes, initializeErrorHandlers } from "./routes";
-
+import { initializeTopics } from './topics';
 // Setup express
 const app = express();
 
@@ -46,3 +46,6 @@ const port = process.env.PORT || 5000;
 server.listen({ port }, () => {
   console.log(`🚀 Server ready at http://localhost:${port}`);
 });
+
+// Setup Mqtt topics
+initializeTopics();

@@ -1,7 +1,7 @@
 import db from './db';
-// import mailer from './mailer';
+import mqtt from './mqtt';
 
 export {
   db,
-  // mailer,
+  mqtt,
 };

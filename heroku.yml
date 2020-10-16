@@ -1,0 +1,13 @@
+setup:
+  addons:
+    - plan: cleardb
+      as: qrder_db
+build:
+  docker:
+    web: Dockerfile.prod
+release:
+  command:
+    - npm run db:mock-setup
+  image: web
+run:
+  web: npm start

@@ -20,3 +20,16 @@ export const formatArguments = (args) => Object.keys(args).reduce((obj, key) => 
   obj[key] = args[key] && args[key].trim() || null;
   return obj;
 }, {});
+
+export const parseMqttMessage = (topic, message) => {
+  const parsedTopic = topic.split('/');
+  return {
+    topic,
+    credentials: {
+      type: parsedTopic[0],
+      token: parsedTopic.slice(1).join('.'),
+      uuid: getUuidFromToken(parsedTopic.slice(1).join('.')),
+    },
+    message: JSON.parse(message)
+  }
+}

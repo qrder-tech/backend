@@ -12,6 +12,15 @@ module.exports = {
     password: md5('sample'),
     createdAt: moment().format('YYYY-MM-DD HH:mm:ss'),
     updatedAt: moment().format('YYYY-MM-DD HH:mm:ss'),
+  },{
+    uuid: uuid(),
+    name: 'postman',
+    surname: 'postman',
+    email: 'postman@postman.com',
+    username: 'postman',
+    password: md5('postman'),
+    createdAt: moment().format('YYYY-MM-DD HH:mm:ss'),
+    updatedAt: moment().format('YYYY-MM-DD HH:mm:ss'),
   }], {}),
   down: async (queryInterface /* Sequelize */) => queryInterface.bulkDelete('Users', null, {})
 };

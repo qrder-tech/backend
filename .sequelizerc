@@ -4,6 +4,6 @@ const env = process.env.NODE_ENV || 'development';
 module.exports = {
   'config': path.resolve('config', 'database.config.js'),
   'models-path': path.resolve('src', 'models'),
-  'seeders-path': path.resolve('src/lib', 'database', 'seeders', env),
+  'seeders-path': path.resolve('src/lib', 'database', 'seeders'),
   'migrations-path': path.resolve('src/lib', 'database', 'migrations')
 };

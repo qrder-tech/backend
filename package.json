@@ -7,8 +7,8 @@
   "private": true,
   "scripts": {
     "start": "nodemon -L ./src/server.js --watch src --exec babel-node",
-    "build": "babel ./bin/www -d dist/",
-    "clean": "rm -r node_modules/",
+    "build": "babel ./src -d dist/",
+    "clean": "rm -r node_modules/ && rm -r dist/",
     "-- DATABASE_SCRIPTS --": "------------------------------------------------",
     "db:mock-setup": "npx sequelize-cli db:migrate:undo:all && npx sequelize-cli db:migrate && npx sequelize-cli db:seed:all && echo DB SETUP COMPLETE!",
     "-- CONTAINER_SCRIPTS --": "-----------------------------------------------",
@@ -50,6 +50,7 @@
     "validator": "^13.1.17"
   },
   "devDependencies": {
+    "@babel/cli": "^7.12.1",
     "@babel/core": "^7.11.6",
     "@babel/node": "^7.10.5",
     "@babel/preset-env": "^7.11.5",

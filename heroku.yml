@@ -10,4 +10,4 @@ release:
     - npm run db:mock-setup
   image: web
 run:
-  web: npm start
+  web: node dist/server.js

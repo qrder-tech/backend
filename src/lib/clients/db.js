@@ -8,10 +8,10 @@ const db = {};
 
 // init sequelize
 const sequelize = new Sequelize(
-  config.sequelize.database,
-  config.sequelize.username,
-  config.sequelize.password,
-  config.sequelize,
+  config.db.database,
+  config.db.username,
+  config.db.password,
+  config.db,
 );
 
 sequelize.authenticate({ logging: console.log }).then(() => {

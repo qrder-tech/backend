@@ -4,18 +4,23 @@
 
 ```js
   const topic = `client/${token}` || `restaurant/${token}`;
+
+  const RestaurantwithServer = `restaurant/${token}/server`;
+  const RestaurantwithClient = `restaurant/${token}/client`;
 ```
 
 ```js
   const message_opcode = {
-    opcode: 'customerArrived', 'newOrder' || 'modifyOrder',
+    type: 0 || 1, // 0 = server, 1 = client
+    opcode: 'customerArrived' || 'newOrder' || 'modifyOrder',
     args: {
 
     }
   };
 
   const message_result = {
-    opcode: 'customerArrived', 'newOrder' || 'modifyOrder',
+    type: 0 || 1, // 0 = server, 1 = client
+    opcode: 'customerArrived' || 'newOrder' || 'modifyOrder',
     res: {
 
     }

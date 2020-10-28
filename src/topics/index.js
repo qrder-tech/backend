@@ -7,7 +7,6 @@ export const initializeTopics = () => {
   mqtt.client.subscribe('restaurant/#', (err) => {
     if (err) {
       console.log('[error]:', err);
-      
     }
   });
 

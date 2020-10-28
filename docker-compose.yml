@@ -10,11 +10,16 @@ services:
       - default
     restart: always
   web: 
-    container_name: qrder_web
     build:
       context: ./
+    container_name: qrder_web
     depends_on: 
       - db
+    environment:
+      MYSQL_ROOT_USERNAME: root
+      MYSQL_ROOT_PASSWORD: bilkent
+      MYSQL_DATABASE: qrder_api
+      MYSQL_HOST: qrder_db
     networks: 
       - default
     ports: 

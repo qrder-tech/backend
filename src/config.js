@@ -18,7 +18,7 @@ if (!process.env.CLOUDAMQP_MQTT_HOSTNAME) {
 }
 
 export default {
-  sequelize: databaseConfig[env],
+  db: databaseConfig,
   mqtt: mqttConfig,
   JWT_SECRET: process.env.JWT_SECRET,
 };

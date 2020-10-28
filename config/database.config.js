@@ -1,26 +1,23 @@
 const url = require('url');
-const parsed = process.env.CLEARDB_DATABASE_URL && url.parse(process.env.CLEARDB_DATABASE_URL);
 
-module.exports = {
-  development: {
-    "username": "root",
-    "password": "bilkent",
-    "database": "qrder_api",
-    "host": "qrder_db",
-    "dialect": "mysql"
-  },
-  test: {
-    "username": "root",
-    "password": null,
-    "database": "database_test",
-    "host": "127.0.0.1",
-    "dialect": "mysql"
-  },
-  production: {
+const env = process.env.NODE_ENV || "development";
+
+if (env != 'development') {
+  const parsed = process.env.CLEARDB_DATABASE_URL && url.parse(process.env.CLEARDB_DATABASE_URL);
+  
+  module.exports = {
     "username": parsed && parsed.auth.split(":")[0],
     "password": parsed && parsed.auth.split(":")[1],
     "database": parsed && parsed.pathname.slice(1),
     "host": parsed && parsed.hostname,
     "dialect": "mysql"
   }
-};
+} else {
+  module.exports = {
+    "username": process.env.MYSQL_ROOT_USERNAME,
+    "password": process.env.MYSQL_ROOT_PASSWORD,
+    "database": process.env.MYSQL_DATABASE,
+    "host": process.env.MYSQL_HOST,
+    "dialect": "mysql"
+  }
+}

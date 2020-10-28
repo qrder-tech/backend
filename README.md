@@ -36,7 +36,7 @@ P.S. In order to be able to use Dockerfile properly, you must install the ``yarn
 ```bash
 echo "JWT_SECRET='SECRET_KEY'" >> .env
 ```
-
+For rest of the environment variables, check [this file](CONFIG_VARS.md).
 ## 4. Start the container
 ```bash
 yarn container:start
@@ -51,7 +51,7 @@ qrder_web | 🐇 Client is connected to MQTT broker as 'qrder-server'
 ```
 
 ## 5. Setup database
-In a separete terminal, run:
+In a separate terminal, run:
 ```bash
 yarn container:setup
 ```
@@ -71,6 +71,7 @@ All set! Go to [http://localhost:5000/](http://localhost:5000/) -- you should se
 yarn sequelize-cli model:generate --name Sample --attributes name:string,surname:string,email:string
 yarn sequelize-cli seed:generate --name Sample
 ```
+You can use the [link](https://sequelize.org/v5/manual/data-types.html) for the data types of sequelize.
 
 ## 7. Deploy
 * All set! Go to [heroku dashboard](https://dashboard.heroku.com) -- you should see list of your apps.

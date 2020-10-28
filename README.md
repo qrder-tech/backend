@@ -36,7 +36,7 @@ P.S. In order to be able to use Dockerfile properly, you must install the ``yarn
 ```bash
 echo "JWT_SECRET='SECRET_KEY'" >> .env
 ```
-For rest of the environment variables, check [this file](CONFIG_VARS.md).
+For the rest of the environment variables, check [this file](CONFIG_VARS.md).
 ## 4. Start the container
 ```bash
 yarn container:start

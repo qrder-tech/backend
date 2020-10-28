@@ -2,7 +2,7 @@ const url = require('url');
 
 const env = process.env.NODE_ENV || "development";
 
-if (env != 'development') {
+if (env === 'production') {
   const parsed = process.env.CLEARDB_DATABASE_URL && url.parse(process.env.CLEARDB_DATABASE_URL);
   
   module.exports = {

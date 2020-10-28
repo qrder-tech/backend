@@ -19,6 +19,7 @@ if (!process.env.CLOUDAMQP_MQTT_HOSTNAME) {
 
 export default {
   db: databaseConfig,
+  env,
   mqtt: mqttConfig,
   JWT_SECRET: process.env.JWT_SECRET,
 };

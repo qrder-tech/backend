@@ -2,7 +2,7 @@ import mqtt from 'mqtt';
 import config from '../../config';
 
 const mq = {};
-const clientId = `qrder-server${  config.env !== 'production' ? `_${  config.env}` : ''}`;
+const clientId = `qrder-server${  config.env !== 'production' ? `_${config.env}_${Math.random().toString().substring(2, 5)}` : ''}`;
 
 mq.connected = false;
 mq.clientId = clientId;

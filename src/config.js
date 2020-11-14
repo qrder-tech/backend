@@ -22,4 +22,7 @@ export default {
   env,
   mqtt: mqttConfig,
   JWT_SECRET: process.env.JWT_SECRET,
+  _timestamp: {
+    updatedAt: Date.now()
+  }
 };

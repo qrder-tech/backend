@@ -1,19 +1,18 @@
 const { Model } = require('sequelize');
 
 module.exports = (sequelize, DataTypes) => {
-  class Restaurant extends Model {
+  class Order extends Model {
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      Restaurant.hasMany(models.Item, { as: 'Menu' });
-      Restaurant.hasMany(models.Order, { as: 'Orders' });
+      Order.belongsTo(models.Restaurant);
+      Order.belongsTo(models.User);
     }
   };
-
-  Restaurant.init({
+  Order.init({
     uuid: {
       primaryKey: true,
       type: DataTypes.UUID,
@@ -21,29 +20,35 @@ module.exports = (sequelize, DataTypes) => {
         isUUID: 4,
       },
     },
-    name: {
+    items: {
       allowNull: false,
       type: DataTypes.STRING
     },
-    address: {
-      allowNull: false,
-      type: DataTypes.STRING
+    isPaid: {
+      defaultValue: false,
+      type: DataTypes.BOOLEAN
     },
-    phoneNumber: {
+    restaurantUuid: {
       allowNull: false,
-      type: DataTypes.STRING
+      type: DataTypes.UUID,
+      references: {
+        model: 'Restaurants',
+        key: 'uuid',
+        as: 'restaurantUuid'
+      },
+      onUpdate: 'cascade',
+      onDelete: 'cascade'
     },
-    email: {
+    userUuid: {
       allowNull: false,
-      type: DataTypes.STRING
-    },
-    username: {
-      allowNull: false,
-      type: DataTypes.STRING
-    },
-    password: {
-      allowNull: false,
-      type: DataTypes.STRING
+      type: DataTypes.UUID,
+      references: {
+        model: 'Users',
+        key: 'uuid',
+        as: 'userUuid'
+      },
+      onUpdate: 'cascade',
+      onDelete: 'cascade'
     },
     createdAt: {
       allowNull: false,
@@ -55,8 +60,7 @@ module.exports = (sequelize, DataTypes) => {
     },
   }, {
     sequelize,
-    modelName: 'Restaurant',
+    modelName: 'Order',
   });
-
-  return Restaurant;
+  return Order;
 };

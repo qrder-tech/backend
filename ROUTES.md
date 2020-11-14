@@ -6,8 +6,8 @@
 ```js
 {
   request: {
-    "username": string
-    "password": string
+    "username": String
+    "password": String
   }
 }
 ```
@@ -15,7 +15,7 @@
 ```js
 {
   response: {
-    "token": string
+    "token": String
   }
 }
 ```
@@ -25,11 +25,11 @@
 ```js
 {
   request: {
-    "name": string
-    "surname": string
-    "email": string
-    "username": string
-    "password": string
+    "name": String
+    "surname": String
+    "email": String
+    "username": String
+    "password": String
   }
 }
 ```
@@ -52,11 +52,11 @@
 ```js
 {
   response: {
-    "name": string
-    "surname": string
-    "email": string
-    "username": string
-    "password": string
+    "name": String
+    "surname": String
+    "email": String
+    "username": String
+    "password": String
   }
 }
 ```
@@ -77,7 +77,14 @@
   request: {
     "restaurant_id": Int
     "table_id": Int
-    "items": List <Item>
+    "items": [
+      {
+        uuid: String,
+        metadata: String, // "0;1;1"
+        quantity: Int
+      },
+      ...
+    ]
   }
 }
 ```

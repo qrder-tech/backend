@@ -35,6 +35,10 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: true,
       type: DataTypes.STRING
     },
+    metadata: {
+      allowNull: true,
+      type: DataTypes.STRING
+    },
     restaurantUuid: {
       allowNull: false,
       type: DataTypes.UUID,

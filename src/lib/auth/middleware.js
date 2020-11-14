@@ -19,7 +19,8 @@ export default (req, res, next) => passport.authenticate('jwt', { session: false
     return;
   }
 
-  console.log('auth-middleware:', user);
+  //console.log('auth-middleware:', user);
+  // user = { uuid: '3d9b7b60-741f-45aa-b94a-68daa30b7ea6' }
   req.user = user;
   next();
 })(req, res, next);

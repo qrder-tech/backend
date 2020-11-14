@@ -1,26 +1,33 @@
 import express from 'express';
 
+import config from '../config';
 import { db, mqtt } from '../lib/clients';
 
 import userRouter from './user';
 import restaurantRouter from './restaurant';
+import orderRouter from './order';
 
 const router = express.Router();
 
 /* GET users listing. */
 router.get('/', async (req, res /* next */) => {
+  const data = { database: null, env: config.env, mqtt: mqtt.connected, status: true, _timestamp: config._timestamp };
   try {
     await db.sequelize.authenticate();
-    res.send({ status: true, database: true, mqtt: mqtt.connected }); // 0: offline 1: online 2: maintanance
+    data.database = true;
   } catch {
-    res.send({ status: true, database: false, mqtt: mqtt.connected }); // 0: offline 1: online 2: maintanance
+    data.database = false;
   }
+
+  res.send(data);
 });
 
 export const initializeRoutes = (app) => {
   app.use('/', router);
   app.use('/user', userRouter);
   app.use('/restaurant', restaurantRouter);
+  app.use('/order', orderRouter);
+
 };
 
 export const initializeErrorHandlers = (app) => {

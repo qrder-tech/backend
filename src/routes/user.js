@@ -95,4 +95,17 @@ router.get('/me', async (req, res, /* next */) => {
   res.send(reduced);
 });
 
+router.get('/me/orders', async (req, res, /* next */) => {
+  const { user } = req;
+
+  const orders = await db.Order.findAll({
+    where: {
+      userUuid: user.uuid,
+      isPaid: true
+    }
+  });
+
+  res.send(orders);
+});
+
 module.exports = router;

@@ -18,7 +18,7 @@ router.get('/', (req, res, /* next */) => {
 
 router.get('/:uuid', async (req, res, /* next */) => {
   const { uuid } = req.params;
-  const restaurantDetails = await db.Restaurant.findByPk(uuid, { include: { model: db.Item, as: 'Menu' } });
+  const restaurantDetails = await db.Restaurant.findByPk(uuid, { include: { as: 'Menu', model: db.Item } });
   const reduced = reduceUserDetails(restaurantDetails.dataValues);
   res.send(reduced);
 });

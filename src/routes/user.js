@@ -90,7 +90,7 @@ router.post('/register', async (req, res, /* next */) => {
 router.get('/me', async (req, res, /* next */) => {
   const { user } = req;
 
-  const userDetails = await db.User.findByPk(user.uuid);
+  const userDetails = await db.User.findByPk(user.uuid, { include: { as: 'Orders', model: db.Order, required: false, where: { isPaid: true } } });
   const reduced = reduceUserDetails(userDetails.dataValues);
   res.send(reduced);
 });

@@ -11,7 +11,7 @@ const router = express.Router();
 
 /* GET users listing. */
 router.get('/', async (req, res /* next */) => {
-  const data = { database: null, env: config.env, mqtt: mqtt.connected, status: true, _timestamp: config._timestamp };
+  const data = { database: null, env: config.env, mqtt: mqtt.connected, status: true, timestamp: config.timestamp };
   try {
     await db.sequelize.authenticate();
     data.database = true;

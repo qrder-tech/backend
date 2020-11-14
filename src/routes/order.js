@@ -5,7 +5,6 @@ import { isEmpty } from 'lodash';
 import { v4 as uuid } from 'uuid';
 
 // import validator from 'validator';
-import { /* generateJwtToken */ reduceUserDetails } from '../lib/utils';
 import constraints from '../lib/constraints';
 import { db } from '../lib/clients';
 
@@ -39,28 +38,30 @@ router.post('/new', async (req, res, /* next */) => {
   // todo: add table model or attribute
 
   // check items are valid
-  if (typeof payload.items != 'object' || !payload.items.length) {
+  if (typeof payload.items !== 'object' || !payload.items.length) {
     const err = constraints.errors.INVALID_ARGS;
     return res.status(err.code).send(err);
   }
 
   const items = [];
   try {
-    for (var i = 0; i < payload.items.length; i++) {
-      const item = await payload.items[i];
-
+    await Promise.all(payload.items.map(async item => {
       if (!item.metadata || !item.quantity) {
-        continue;
+        const err = constraints.errors.INVALID_ARGS;
+        err.data = item;
+        return res.status(err.code).send(err);
       }
 
       const isValid = await db.Item.findByPk(item.uuid, { attributes: ['uuid'] });
 
       if (!isValid) {
-        continue;
+        const err = constraints.errors.INVALID_ARGS;
+        err.data = item;
+        return res.status(err.code).send(err);
       }
 
-      items.push(item);
-    }
+      return items.push(item);
+    }));
   } catch {
     const err = constraints.errors.INVALID_ARGS;
     return res.status(err.code).send(err);
@@ -84,7 +85,7 @@ router.post('/new', async (req, res, /* next */) => {
     return res.status(err.code).send(err);
   }
 
-  res.send(true);
+  return res.send(true);
 });
 
 module.exports = router;

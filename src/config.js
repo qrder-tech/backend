@@ -14,7 +14,7 @@ if (!process.env.JWT_SECRET) {
 
 if (!process.env.CLOUDAMQP_MQTT_HOSTNAME) {
   console.log("❌ Please control your environment variables! (CLOUDAMQP_MQTT_HOSTNAME is empty)");
-  //process.exit(1);
+  // process.exit(1);
 }
 
 export default {

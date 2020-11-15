@@ -1,5 +1,5 @@
 import express from 'express';
-import { get, isEmpty } from 'lodash';
+import { isEmpty } from 'lodash';
 // import md5 from 'md5';
 // import { Op } from 'sequelize';
 import { v4 as uuid } from 'uuid';
@@ -17,7 +17,7 @@ router.get('/', (req, res, /* next */) => {
 
 router.post('/new', async (req, res, /* next */) => {
   const payload = req.body;
-  const { user } = req; //isteği  kim yaptı
+  const { user } = req; // isteği  kim yaptı
 
   if (isEmpty(payload) || !payload.restaurant_uuid || !payload.table_id || !payload.items) {
     const err = constraints.errors.MISSING_ARGS;
@@ -88,26 +88,26 @@ router.post('/new', async (req, res, /* next */) => {
 });
 
 router.get("/:uuid", async(req,res, )  => {
-const { user } = req; //isteği  kim yaptı
-const { uuid } = req.params;
-const restaurantDetails = await db.Order.findByPk(uuid, {where: {userUuid: user.uuid}})
-res.send(restaurantDetails)
+  const { user } = req; // isteği  kim yaptı
+  const  uuid1 = req.params.uuid;
+  const restaurantDetails = await db.Order.findByPk(uuid1, {where: {userUuid: user.uuid}})
+  res.send(restaurantDetails)
 })
 
 
 router.delete("/remove/:uuid", async(req,res,) => {
-const { user } = req; //isteği  kim yaptı
-const { uuid } = req.params;
-try
-{
-const restaurantDetails = await db.Order.findByPk(uuid, {where: {userUuid: user.uuid}})
-restaurantDetails.destroy()
-res.send(true)
-}
-catch
-{
-  res.send(false)
+  const { user } = req; // isteği  kim yaptı
+  const  uuid1 = req.params.uuid;
+  try
+  {
+    const restaurantDetails = await db.Order.findByPk(uuid1, {where: {userUuid: user.uuid}})
+    restaurantDetails.destroy()
+    res.send(true)
+  }
+  catch
+  {
+    res.send(false)
 
-}
+  }
 })
 module.exports = router;

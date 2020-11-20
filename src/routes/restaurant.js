@@ -40,4 +40,10 @@ router.get('/:uuid/me', async (req, res, /* next */) => {
   const reduced = reduceUserDetails(restaurantDetails.dataValues);
   res.send(reduced);
 });
+
+router.get('/:uuid/orders', async (req, res, /* next */) => {
+  const { uuid } = req.params;
+  const restaurantDetails = await db.Order.findAll({where: {restaurantUuid : uuid}});
+  res.send(restaurantDetails)
+});
 module.exports = router;

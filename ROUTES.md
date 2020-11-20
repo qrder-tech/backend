@@ -208,7 +208,7 @@ class Order {
 ```js
 {
   response: {
-    ...
+    "menu" : List<Item>
   }
 }
 ```

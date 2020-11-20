@@ -94,7 +94,6 @@ router.get("/:uuid", async(req,res, )  => {
   res.send(restaurantDetails)
 })
 
-
 router.delete("/remove/:uuid", async(req,res,) => {
   const { user } = req; // isteği  kim yaptı
   const  uuid1 = req.params.uuid;

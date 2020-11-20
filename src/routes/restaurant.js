@@ -8,6 +8,7 @@ import express from 'express';
 import { /* generateJwtToken */ reduceUserDetails } from '../lib/utils';
 // import constraints from '../lib/constraints';
 import { db } from '../lib/clients';
+// import restaurant from '../topics/restaurant';
 
 const router = express.Router();
 
@@ -23,4 +24,20 @@ router.get('/:uuid', async (req, res, /* next */) => {
   res.send(reduced);
 });
 
+
+router.get('/:uuid/menu' , async  (req,res, ) =>
+{
+  const { uuid } = req.params;
+  const menu = await db.Item.findAll({where: { restaurantUuid : uuid } });
+  res.send(menu);
+
+});
+
+
+router.get('/:uuid/me', async (req, res, /* next */) => {
+  const { uuid } = req.params;
+  const restaurantDetails = await db.Restaurant.findByPk(uuid, { include: { as: 'Menu', model: db.Item } });
+  const reduced = reduceUserDetails(restaurantDetails.dataValues);
+  res.send(reduced);
+});
 module.exports = router;

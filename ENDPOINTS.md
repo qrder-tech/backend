@@ -15,14 +15,13 @@ Method | Endpoint | Auth Type
 `GET` | [/restaurant](#restaurant) | `user`
 `GET`, `POST` | [/restaurant/me](#restaurantme) | `restaurant`
 `GET` | [/restaurant/menu](#restaurantmenu) | `restaurant`
-`GET`, `POST` | [/restaurant/item](#restaurantitem) | `restaurant`
+`GET`, `POST`, `DELETE` | [/restaurant/item](#restaurantitem) | `restaurant`
 `GET` | [/restaurant/orders](#restaurantorders) | `restaurant`
 ||
 `GET` | [/order](#order) | `user`, `restaurant`
 `POST` | [/order/new](#ordernew) | `user`, `restaurant`
 `POST` | [/order/modify](#ordermodify) | `user`, `restaurant`
 `POST` | [/order/pay](#orderpay) | `user`, `restaurant`
-`POST` | /order/remove | `admin`
 
 ---
 
@@ -197,6 +196,15 @@ metadata _(Optional)_ | String |
 Name | Type | Information
 -- | -- | --
 success | Boolean
+### `DELETE`:
+##### Query Params:
+Name | Type | Information
+-- | -- | --
+uuid | Uuid | 
+##### Response:
+Name | Type | Information
+-- | -- | --
+success | Boolean | 
 
 ## /restaurant/orders
 ### `GET`:

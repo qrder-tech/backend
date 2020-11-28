@@ -12,11 +12,11 @@ module.exports = {
     password: md5('sample'),
     createdAt: moment().format('YYYY-MM-DD HH:mm:ss'),
     updatedAt: moment().format('YYYY-MM-DD HH:mm:ss'),
-  },{
+  }, {
     uuid: '3d9b7b60-741f-45aa-b94a-68daa30b7ea6',
-    name: 'postman',
-    surname: 'postman',
-    email: 'postman@postman.com',
+    name: 'John',
+    surname: 'Doe',
+    email: 'john_doe@postman.com',
     username: 'postman',
     password: md5('postman'),
     createdAt: moment().format('YYYY-MM-DD HH:mm:ss'),

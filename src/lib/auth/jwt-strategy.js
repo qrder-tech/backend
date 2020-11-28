@@ -13,11 +13,15 @@ const strategy = new JwtStrategy(params, async (payload, done) => {
     attributes: ['uuid'],
   });
 
-  if (!user) {
+  const restaurant = await db.Restaurant.findByPk(payload.uuid, {
+    attributes: ['uuid'],
+  });
+
+  if (!user && !restaurant) {
     return done(constraints.errors.UNAUTH, false);
   }
 
-  return done(null, user.dataValues);
+  return done(null, { user: user && user.dataValues, restaurant: restaurant && restaurant.dataValues });
 });
 
 export default strategy;

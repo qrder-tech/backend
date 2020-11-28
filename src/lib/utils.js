@@ -31,5 +31,9 @@ export const parseMqttMessage = (topic, message) => {
       uuid: getUuidFromToken(parsedTopic.slice(1).join('.')),
     },
     message: JSON.parse(message)
-  }
-}
+  };
+};
+
+export const convertType = (text) => {
+  return text.charAt(0).toUpperCase() + text.slice(1).toLowerCase();
+}; 

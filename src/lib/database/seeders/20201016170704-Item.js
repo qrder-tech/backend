@@ -11,7 +11,7 @@ module.exports = {
     restaurantUuid: '56bc78e9-05fd-454c-99ad-18d479aa8ad9',
     createdAt: moment().format('YYYY-MM-DD HH:mm:ss'),
     updatedAt: moment().format('YYYY-MM-DD HH:mm:ss'),
-  },{
+  }, {
     uuid: 'c49532af-3256-442f-9f0d-aa4300e7c400',
     name: 'Lehmacun',
     price: 10.00,
@@ -21,17 +21,17 @@ module.exports = {
     restaurantUuid: '56bc78e9-05fd-454c-99ad-18d479aa8ad9',
     createdAt: moment().format('YYYY-MM-DD HH:mm:ss'),
     updatedAt: moment().format('YYYY-MM-DD HH:mm:ss'),
-  },{
+  }, {
     uuid: '527e7794-254a-4385-af20-90314dcfda9c',
     name: 'SSK Dürüm',
     price: 10.00,
-    desc: 'Lehmacun from anteb to bilkent',
+    desc: 'ASPAVA Wrap',
     img: '',
     metadata: 'sos;sogan;sarimsak',
     restaurantUuid: '56bc78e9-05fd-454c-99ad-18d479aa8ad9',
     createdAt: moment().format('YYYY-MM-DD HH:mm:ss'),
     updatedAt: moment().format('YYYY-MM-DD HH:mm:ss'),
-  },{
+  }, {
     uuid: uuid(),
     name: 'Hamburger',
     price: 25.00,

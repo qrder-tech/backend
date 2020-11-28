@@ -8,7 +8,7 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      Item.belongsTo(models.Restaurant);
+      Item.belongsTo(models.Restaurant, { as: 'Menu', foreignKey: 'restaurantUuid' });
     }
   };
   Item.init({

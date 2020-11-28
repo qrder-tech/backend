@@ -32,4 +32,4 @@ export const initializeTopics = () => {
       console.log(`[${topic}]: ${message}`);
     }
   });
-}
+};

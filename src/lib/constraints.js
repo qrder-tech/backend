@@ -8,4 +8,4 @@ export default {
     VALIDATOR_ARGS: { code: 400, msg: 'Arguments cannot pass validator' },
     UNKNOWN: { code: 400, msg: 'Unknown error' }
   }
-}
+};

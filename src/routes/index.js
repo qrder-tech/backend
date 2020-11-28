@@ -3,9 +3,10 @@ import express from 'express';
 import config from '../config';
 import { db, mqtt } from '../lib/clients';
 
-import userRouter from './user';
-import restaurantRouter from './restaurant';
+import authRouter from './auth';
 import orderRouter from './order';
+import restaurantRouter from './restaurant';
+import userRouter from './user';
 
 const router = express.Router();
 
@@ -24,15 +25,15 @@ router.get('/', async (req, res /* next */) => {
 
 export const initializeRoutes = (app) => {
   app.use('/', router);
-  app.use('/user', userRouter);
-  app.use('/restaurant', restaurantRouter);
+  app.use('/auth', authRouter);
   app.use('/order', orderRouter);
-
+  app.use('/restaurant', restaurantRouter);
+  app.use('/user', userRouter);
 };
 
 export const initializeErrorHandlers = (app) => {
   // catch 404 and forward to error handler
-  app.use((req, res /* next */) => res.status(404).send());
+  app.use((req, res /* next */) => res.status(404).send("Not found!"));
 
   // error handler
   app.use((err, req, res /* next */) => {

@@ -6,44 +6,52 @@ import express from 'express';
 
 // import validator from 'validator';
 import { /* generateJwtToken */ reduceUserDetails } from '../lib/utils';
-// import constraints from '../lib/constraints';
+import constraints from '../lib/constraints';
 import { db } from '../lib/clients';
 // import restaurant from '../topics/restaurant';
 
 const router = express.Router();
 
 /* GET users listing. */
-router.get('/', (req, res, /* next */) => {
-  res.send({ status: 1 });
-});
+router.get('/', async (req, res, /* next */) => {
+  const { uuid } = req.query;
 
-router.get('/:uuid', async (req, res, /* next */) => {
-  const { uuid } = req.params;
+  if (!uuid) {
+    const err = constraints.errors.MISSING_ARGS;
+    return res.status(err.code).send(err);
+  }
+
   const restaurantDetails = await db.Restaurant.findByPk(uuid, { include: { as: 'Menu', model: db.Item } });
   const reduced = reduceUserDetails(restaurantDetails.dataValues);
-  res.send(reduced);
+  return res.send(reduced);
 });
 
+router.get('/me', async (req, res, /* next */) => {
+  const { restaurant } = req;
 
-router.get('/:uuid/menu' , async  (req,res, ) =>
-{
-  const { uuid } = req.params;
-  const menu = await db.Item.findAll({where: { restaurantUuid : uuid } });
-  res.send(menu);
-
-});
-
-
-router.get('/:uuid/me', async (req, res, /* next */) => {
-  const { uuid } = req.params;
-  const restaurantDetails = await db.Restaurant.findByPk(uuid, { include: { as: 'Menu', model: db.Item } });
+  const restaurantDetails = await db.Restaurant.findByPk(restaurant.uuid, { include: { as: 'Menu', model: db.Item } });
   const reduced = reduceUserDetails(restaurantDetails.dataValues);
-  res.send(reduced);
+  return res.send(reduced);
 });
 
-router.get('/:uuid/orders', async (req, res, /* next */) => {
-  const { uuid } = req.params;
-  const restaurantDetails = await db.Order.findAll({where: {restaurantUuid : uuid}});
-  res.send(restaurantDetails)
+router.get('/menu', async (req, res,) => {
+  const { restaurant } = req;
+
+  const menu = await db.Item.findAll({ where: { restaurantUuid: restaurant.uuid } });
+  return res.send({ menu });
 });
+
+router.get('/orders', async (req, res, /* next */) => {
+  const { restaurant } = req;
+
+  const orders = await db.Order.findAll({
+    where: { restaurantUuid: restaurant.uuid },
+    order: [
+      ['isPaid']
+    ]
+  });
+
+  return res.send({ orders });
+});
+
 module.exports = router;

@@ -9,8 +9,8 @@ module.exports = {
     address: 'Bilkent Merkez Kampüs, Çankaya/ANKARA',
     phoneNumber: '(0312) 266 00 00',
     email: 'kebab@bilkent.com',
-    username: 'bilkentKebab',
-    password: md5('kebab'),
+    username: 'postman',
+    password: md5('postman'),
     createdAt: moment().format('YYYY-MM-DD HH:mm:ss'),
     updatedAt: moment().format('YYYY-MM-DD HH:mm:ss'),
   }, {

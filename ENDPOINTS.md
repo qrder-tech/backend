@@ -116,7 +116,7 @@ Name | Type | Information
 ##### Response:
 Name | Type | Information
 -- | -- | --
-orders | Order[] | 
+orders | Order[] | Array of the Order model associated with the `user`.
 
 ---
 

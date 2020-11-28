@@ -1,7 +1,7 @@
 ﻿# Qrder Backend Server
 
 Qrder is an online app for ordering in restaurants with high time efficiency and non-physical contacting.
-Check product [documentation]() for more details.
+Check product [documentation](ENDPOINTS.md) for more details.
 
 ## Installation
 

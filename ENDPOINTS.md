@@ -11,6 +11,7 @@ Method | Endpoint | Auth Type
 `POST` | /auth/token/renew | `user`, `restaurant`
 ||
 `GET`, `POST` | [/user/me](#userme) | `user`
+`GET` | [/user/orders](#userorders) | `user`
 ||
 `GET` | [/restaurant](#restaurant) | `user`
 `GET`, `POST` | [/restaurant/me](#restaurantme) | `restaurant`
@@ -92,7 +93,7 @@ name | String |
 surname | String | 
 email | String | 
 username | String | 
-activeOrder _(Dependent)_ | Order | If user has an unpaid order, it must be returned.
+activeOrder _(Dependent)_ | Order | If `user` has an unpaid order, it must be returned.
 ### `POST`:
 ##### Body Params:
 Name | Type | Information
@@ -105,6 +106,17 @@ password _(Optional)_ | String |
 Name | Type | Information
 -- | -- | --
 success | Boolean | 
+
+## /user/orders
+### `GET`:
+##### Query Params:
+Name | Type | Information
+-- | -- | --
+||
+##### Response:
+Name | Type | Information
+-- | -- | --
+orders | Order[] | 
 
 ---
 
@@ -122,7 +134,7 @@ name | String |
 address | Float | 
 phoneNumber | String | 
 email | String | 
-menu | Item[] | Array of the Item model associated with the given restaurant uuid.
+menu | Item[] | Array of the Item model associated with the given `restaurant` uuid.
 
 ## /restaurant/me
 ### `GET`:
@@ -160,7 +172,7 @@ Name | Type | Information
 ##### Response:
 Name | Type | Information
 -- | -- | --
-menu | Item[] | Array of Item model
+menu | Item[] | Array of the Item model associated with the `restaurant`.
 
 ## /restaurant/item
 ### `GET`:
@@ -215,7 +227,7 @@ isActive _(Optional)_ | Boolean | Default value is `true`. If the value set to `
 ##### Response:
 Name | Type | Information
 -- | -- | --
-orders | Order[] | Array of Order model
+orders | Order[] | Array of the Order model associated with the `restaurant`.
 
 ---
 
@@ -232,16 +244,16 @@ Name | Type | Information
 uuid | Uuid | 
 items | String | 
 isPaid | Boolean | 
-user _(Dependent)_ | User | The user who is associated with the order. If the request is made by a restaurant, it will be returned.
-restaurant _(Dependent)_ | Restaurant | The restaurant who is associated with the order. If the request is made by a user, it will be returned.
+user _(Dependent)_ | User | The `user` who is associated with the order. If the request is made by a `restaurant`, it will be returned.
+restaurant _(Dependent)_ | Restaurant | The `restaurant` who is associated with the order. If the request is made by a `user`, it will be returned.
 
 ## /order/new
 ### `POST`:
 ##### Body Params:
 Name | Type | Information
 -- | -- | --
-userUuid _(Dependent)_ | Uuid | If the request is made by a restaurant, it is required.
-restaurantUuid _(Dependent)_ | Uuid | If the request is made by a user, it is required.
+userUuid _(Dependent)_ | Uuid | If the request is made by a `restaurant`, it is required.
+restaurantUuid _(Dependent)_ | Uuid | If the request is made by a `user`, it is required.
 tableId | Int |
 items | OrderItem[] | (uuid, metadata, quantity). Metadata part of items must be `0` or `1` for each specification and separated with semicolon (`;`)  
 ##### Response:
@@ -267,8 +279,8 @@ success | Boolean |
 Name | Type | Information
 -- | -- | --
 uuid | Uuid | 
-token _(Dependent)_ | String | It will be received from an external online payment system. If the request is made by a user, it is required.
-isPaid _(Dependent)_ | Boolean | If the order has paid via cash, it must be `true`. If the request is made by a restaurant, it is required.
+token _(Dependent)_ | String | It will be received from an external online payment system. If the request is made by a `user`, it is required.
+isPaid _(Dependent)_ | Boolean | If the order has paid via cash, it must be `true`. If the request is made by a `restaurant`, it is required.
 ##### Response:
 Name | Type | Information
 -- | -- | --

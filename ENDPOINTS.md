@@ -173,6 +173,15 @@ Name | Type | Information
 Name | Type | Information
 -- | -- | --
 menu | Item[] | Array of the Item model associated with the `restaurant`.
+### `POST`:
+##### Body Params:
+Name | Type | Information
+-- | -- | --
+items | Item[] | Attributes are same as in the  `/restaurant/item`
+##### Response:
+Name | Type | Information
+-- | -- | --
+success | Boolean
 
 ## /restaurant/item
 ### `GET`:
@@ -228,6 +237,31 @@ isActive _(Optional)_ | Boolean | Default value is `true`. If the value set to `
 Name | Type | Information
 -- | -- | --
 orders | Order[] | Array of the Order model associated with the `restaurant`.
+
+## /restaurant/tables
+### `GET`:
+##### Query Params:
+Name | Type | Information
+-- | -- | --
+||
+##### Response:
+Name | Type | Information
+-- | -- | --
+tables | Table[] | Array of the Table model associated with the `restaurant`.
+### `POST`:
+##### Query Params:
+Name | Type | Information
+-- | -- | --
+uuid _(Optional)_ | Uuid | If it does not exist, a new table will be created.
+##### Body Params:
+Name | Type | Information
+-- | -- | --
+name _(Optional)_ | String | If a new table will be created, it is required.
+services _(Optional)_ | String | Each requested service must be separated with semicolon (`;`)  
+##### Response:
+Name | Type | Information
+-- | -- | --
+success | Boolean
 
 ---
 

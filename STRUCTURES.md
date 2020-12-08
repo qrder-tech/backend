@@ -47,4 +47,11 @@
     img: String,
     restaurantId: uuid
   }
+
+  class TableModel {
+    uuid: uuid,
+    name: String,
+    services: String,
+    restaurantUuid: uuid (FK)
+  }
 ```

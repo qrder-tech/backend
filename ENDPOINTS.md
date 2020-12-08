@@ -15,9 +15,10 @@ Method | Endpoint | Auth Type
 ||
 `GET` | [/restaurant](#restaurant) | `user`
 `GET`, `POST` | [/restaurant/me](#restaurantme) | `restaurant`
-`GET` | [/restaurant/menu](#restaurantmenu) | `restaurant`
+`GET`, `POST` | [/restaurant/menu](#restaurantmenu) | `restaurant`
 `GET`, `POST`, `DELETE` | [/restaurant/item](#restaurantitem) | `restaurant`
 `GET` | [/restaurant/orders](#restaurantorders) | `restaurant`
+`GET`, `POST` | [/restaurant/tables](#restauranttables) | `restaurant`
 ||
 `GET` | [/order](#order) | `user`, `restaurant`
 `POST` | [/order/new](#ordernew) | `user`, `restaurant`

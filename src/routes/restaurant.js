@@ -2,10 +2,10 @@ import express from 'express';
 // import { isEmpty } from 'lodash';
 // import md5 from 'md5';
 // import { Op } from 'sequelize';
-// import { v4 as uuid } from 'uuid';
+// import { v4 as _uuid } from 'uuid';
 
 // import validator from 'validator';
-import { v4 as uuid } from 'uuid';
+import { v4 as _uuid } from 'uuid';
 import { /* generateJwtToken */ reduceUserDetails } from '../lib/utils';
 import constraints from '../lib/constraints';
 import { db } from '../lib/clients';
@@ -47,7 +47,9 @@ router.post('/me', async (req, res, /* next */) => {
       name: payload.name, 
       address : payload.price,
       phoneNumber : payload.phoneNumber , 
-      email : payload.email 
+      email : payload.email,
+      restaurantType : payload.restaurantType ,
+      tableCount : payload.tableCount
     }, {
       where: { uuid : restaurant.uuid}
     });
@@ -57,23 +59,24 @@ router.post('/me', async (req, res, /* next */) => {
  
 
 router.get('/menu', async (req, res,) => {
-  const { restaurant } = req;
-
-  const menu = await db.Item.findAll({ where: { restaurantUuid: restaurant.uuid } });
-  return res.send({ menu });
+//  const { restaurant } = req;
+  const menu = await db.Item.findAll( {group: ["itemType"] } );
+  return res.send(menu); // buraya bak
 });
 
 router.get('/orders', async (req, res, /* next */) => {
   const { restaurant } = req;
 
+  
   const orders = await db.Order.findAll({
     where: { restaurantUuid: restaurant.uuid },
     order: [
       ['isPaid']
     ]
   });
+ 
 
-  return res.send({ orders });
+  return res.send( {orders });
 });
 
 
@@ -116,12 +119,12 @@ router.post('/item', async (req, res, /* next */) => {
   }
   
   await db.Item.create({
-    uuid: uuid(),
+    uuid: _uuid(),
     name: payload.name, 
     price : payload.price,
     desc: payload.desc , 
     metadata : payload.metadata ,
-    //  img: payload.img,
+    img: payload.img,
     restaurantUuid : restaurant.uuid,
     createdAt: moment().format('YYYY-MM-DD HH:mm:ss'),
     updatedAt: moment().format('YYYY-MM-DD HH:mm:ss')
@@ -142,5 +145,49 @@ router.delete('/item', async (req, res, /* next */) => {
   return res.send({ success: true });
 });
 
+
+router.get('/tables', async (req, res, /* next */) => {
+
+  const { restaurant } = req;
+  const tables = await db.Table.findAll({
+    where: { restaurantUuid : restaurant.uuid}
+  });
+  
+  return res.send( {tables} );
+});
+
+router.post('/tables', async (req, res, /* next */) => {
+
+  const { restaurant } = req;
+  const payload = req.body;
+  const {tableuuid} = req.query;
+  if(tableuuid === undefined)
+  {
+    await db.Table.create( 
+      {
+        uuid : _uuid(),
+        name: payload.name, 
+        services: payload.services,
+        createdAt: moment().format('YYYY-MM-DD HH:mm:ss'),
+        updatedAt: moment().format('YYYY-MM-DD HH:mm:ss'),
+        restaurantUuid : restaurant.uuid,
+      });
+    return res.send(true);
+
+  }
+  
+    
+  await db.Table.update( 
+    {
+      name: payload.name, 
+      service : payload.service,
+        
+    }, {
+      where: {uuid : tableuuid ,  restaurantUuid : restaurant.uuid}
+    });
+     
+  return res.send({ success: true });
+  
+});
 
 module.exports = router;

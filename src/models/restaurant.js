@@ -10,6 +10,7 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       Restaurant.hasMany(models.Item, { as: 'Menu', foreignKey: 'restaurantUuid' });
       Restaurant.hasMany(models.Order, { as: 'Orders', foreignKey: 'restaurantUuid' });
+      Restaurant.hasMany(models.Table, { as: 'Tables', foreignKey: 'restaurantUuid' });
     }
   };
 
@@ -45,6 +46,14 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
       type: DataTypes.STRING
     },
+    restaurantType: {
+      allowNull: false,
+      type: DataTypes.STRING
+    },
+    tableCount: {
+      allowNull: false,
+      type: DataTypes.INTEGER
+    },
     createdAt: {
       allowNull: false,
       type: DataTypes.DATE
@@ -52,7 +61,7 @@ module.exports = (sequelize, DataTypes) => {
     updatedAt: {
       allowNull: false,
       type: DataTypes.DATE
-    },
+    }
   }, {
     sequelize,
     modelName: 'Restaurant',

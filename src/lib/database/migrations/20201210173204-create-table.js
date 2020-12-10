@@ -1,6 +1,6 @@
 module.exports = {
-  up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable('Items', {
+  up: async (queryInterface,  Sequelize ) => {
+    await queryInterface.createTable('Tables', {
       uuid: {
         primaryKey: true,
         type: Sequelize.UUID,
@@ -9,25 +9,14 @@ module.exports = {
         },
       },
       name: {
+        type: Sequelize.STRING,
         allowNull: false,
-        type: Sequelize.STRING
       },
-      price: {
-        allowNull: false,
-        type: Sequelize.FLOAT
-      },
-      desc: {
-        allowNull: false,
-        type: Sequelize.TEXT
-      },
-      img: {
+      services: {
+        type: Sequelize.STRING,
         allowNull: true,
-        type: Sequelize.STRING
       },
-      metadata: {
-        allowNull: true,
-        type: Sequelize.STRING
-      },
+      
       restaurantUuid: {
         allowNull: false,
         type: Sequelize.UUID,
@@ -37,12 +26,7 @@ module.exports = {
           as: 'restaurantUuid'
         },
         onUpdate: 'cascade',
-        onDelete: 'cascade'
-      },
-      itemType: 
-      {
-        allowNull : false,
-        type: Sequelize.STRING
+        onDelete : "cascade"
       },
       createdAt: {
         allowNull: false,
@@ -51,10 +35,10 @@ module.exports = {
       updatedAt: {
         allowNull: false,
         type: Sequelize.DATE
-      }
+      },
     });
   },
-  down: async (queryInterface /* Sequelize */) => {
-    await queryInterface.dropTable('Items');
+  down: async (queryInterface, /* Sequelize */) => {
+    await queryInterface.dropTable('Tables');
   }
 };

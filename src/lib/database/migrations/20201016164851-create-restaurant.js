@@ -32,6 +32,14 @@ module.exports = {
         allowNull: false,
         type: Sequelize.STRING
       },
+      restaurantType: {
+        allowNull: false,
+        type: Sequelize.STRING
+      },
+      tableCount: {
+        allowNull: false,
+        type: Sequelize.INTEGER
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE

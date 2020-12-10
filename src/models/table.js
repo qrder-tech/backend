@@ -1,17 +1,20 @@
-const { Model } = require('sequelize');
+
+const {
+  Model
+} = require('sequelize');
 
 module.exports = (sequelize, DataTypes) => {
-  class Item extends Model {
+  class Table extends Model {
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      Item.belongsTo(models.Restaurant, { as: 'Menu', foreignKey: 'restaurantUuid' });
+      Table.belongsTo(models.Restaurant, { as: 'Restaurants', foreignKey: 'restaurantUuid' });
     }
   };
-  Item.init({
+  Table.init({
     uuid: {
       primaryKey: true,
       type: DataTypes.UUID,
@@ -23,19 +26,7 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
       type: DataTypes.STRING
     },
-    price: {
-      allowNull: false,
-      type: DataTypes.FLOAT
-    },
-    desc: {
-      allowNull: false,
-      type: DataTypes.TEXT
-    },
-    img: {
-      allowNull: true,
-      type: DataTypes.STRING
-    },
-    metadata: {
+    services: {
       allowNull: true,
       type: DataTypes.STRING
     },
@@ -47,14 +38,11 @@ module.exports = (sequelize, DataTypes) => {
         key: 'uuid',
         as: 'restaurantUuid'
       },
+      
       onUpdate: 'cascade',
       onDelete: 'cascade'
     },
-    itemType: 
-    {
-      allowNull : false,
-      type: DataTypes.STRING
-    },
+    
     createdAt: {
       allowNull: false,
       type: DataTypes.DATE
@@ -62,10 +50,10 @@ module.exports = (sequelize, DataTypes) => {
     updatedAt: {
       allowNull: false,
       type: DataTypes.DATE
-    }
+    },
   }, {
     sequelize,
-    modelName: 'Item',
+    modelName: 'Table',
   });
-  return Item;
+  return Table;
 };

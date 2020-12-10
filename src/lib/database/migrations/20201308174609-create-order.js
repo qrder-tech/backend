@@ -38,6 +38,17 @@ module.exports = {
         onUpdate: 'cascade',
         onDelete: 'cascade'
       },
+      tableUuid: {
+        allowNull: false,
+        type: Sequelize.UUID,
+        references: {
+          model: 'Tables',
+          key: 'uuid',
+          as: 'tableUuid'
+        },
+        onUpdate: 'cascade',
+        onDelete: 'cascade'
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE
@@ -45,7 +56,7 @@ module.exports = {
       updatedAt: {
         allowNull: false,
         type: Sequelize.DATE
-      }
+      },
     });
   },
   down: async (queryInterface /* Sequelize */) => {

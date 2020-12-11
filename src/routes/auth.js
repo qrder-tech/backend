@@ -54,7 +54,7 @@ router.post('/registration', async (req, res, /* next */) => {
   let err;
 
   // check payload
-  if (!type || isEmpty(payload) || !payload.username || !payload.password || !payload.name || !payload.email || !payload.tableCount) {
+  if (!type || isEmpty(payload) || !payload.username || !payload.password || !payload.name || !payload.email) {
     err = constraints.errors.MISSING_ARGS;
   }
 
@@ -100,8 +100,7 @@ router.post('/registration', async (req, res, /* next */) => {
     phoneNumber: payload.phoneNumber,
     email: payload.email,
     username: payload.username,
-    password: md5(payload.password),
-    tableCount: payload.tableCount
+    password: md5(payload.password)
   });
   const user = await db[type].create(credentials);
 

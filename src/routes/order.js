@@ -130,11 +130,4 @@ router.post('/new', async (req, res, /* next */) => {
   return res.send({ uuid: order.dataValues.uuid });
 });
 
-
-router.post('/new', async (req,  res, /* next */) => {
-
-  // const Uuid = req.params;
-  //  const Items = req.params;
-  res.send(req);
-});
 module.exports = router;

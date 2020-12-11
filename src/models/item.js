@@ -50,11 +50,6 @@ module.exports = (sequelize, DataTypes) => {
       onUpdate: 'cascade',
       onDelete: 'cascade'
     },
-    itemType: 
-    {
-      allowNull : false,
-      type: DataTypes.STRING
-    },
     createdAt: {
       allowNull: false,
       type: DataTypes.DATE
@@ -62,7 +57,7 @@ module.exports = (sequelize, DataTypes) => {
     updatedAt: {
       allowNull: false,
       type: DataTypes.DATE
-    }
+    },
   }, {
     sequelize,
     modelName: 'Item',

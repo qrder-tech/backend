@@ -10,7 +10,6 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       Order.belongsTo(models.Restaurant, { as: 'RestaurantOrders', foreignKey: 'restaurantUuid' });
       Order.belongsTo(models.User, { as: 'UserOrders', foreignKey: 'userUuid' });
-      Order.belongsTo(models.Table, { as: 'TableOrders', foreignKey: 'tableUuid' });
     }
   };
   Order.init({
@@ -51,17 +50,6 @@ module.exports = (sequelize, DataTypes) => {
       onUpdate: 'cascade',
       onDelete: 'cascade'
     },
-    tableUuid: {
-      allowNull: true,
-      type : DataTypes.UUID,
-      references : {
-        model: "Tables",
-        key: "uuid",
-        as : "tableUuid"
-      },
-      onUpdate: 'cascade',
-      onDelete: 'cascade'
-    },
     createdAt: {
       allowNull: false,
       type: DataTypes.DATE
@@ -69,7 +57,7 @@ module.exports = (sequelize, DataTypes) => {
     updatedAt: {
       allowNull: false,
       type: DataTypes.DATE
-    }
+    },
   }, {
     sequelize,
     modelName: 'Order',

@@ -12,6 +12,9 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       Table.belongsTo(models.Restaurant, { as: 'Restaurants', foreignKey: 'restaurantUuid' });
+      Table.hasMany(models.Order, { as: 'RecentOrders', foreignKey: 'tableUuid' });
+      Table.hasMany(models.Service, { as: 'Services', foreignKey: 'tableUuid' });
+
     }
   };
   Table.init({
@@ -24,10 +27,6 @@ module.exports = (sequelize, DataTypes) => {
     },
     name: {
       allowNull: false,
-      type: DataTypes.STRING
-    },
-    services: {
-      allowNull: true,
       type: DataTypes.STRING
     },
     restaurantUuid: {

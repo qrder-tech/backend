@@ -11,6 +11,8 @@ module.exports = {
     email: 'kebab@bilkent.com',
     username: 'postman',
     password: md5('postman'),
+    tableCount: 13,
+    restaurantType : "self",
     createdAt: moment().format('YYYY-MM-DD HH:mm:ss'),
     updatedAt: moment().format('YYYY-MM-DD HH:mm:ss'),
   }, {
@@ -21,6 +23,8 @@ module.exports = {
     email: 'lokal71@ankuva.com',
     username: 'lokal71',
     password: md5('lokal71'),
+    tableCount: 13,
+    restaurantType : "normal",
     createdAt: moment().format('YYYY-MM-DD HH:mm:ss'),
     updatedAt: moment().format('YYYY-MM-DD HH:mm:ss'),
   }], {}),

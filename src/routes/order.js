@@ -8,6 +8,8 @@ import { v4 as _uuid } from 'uuid';
 import constraints from '../lib/constraints';
 import { db } from '../lib/clients';
 
+const moment = require('moment');
+
 const router = express.Router();
 
 /* GET users listing. */
@@ -37,7 +39,7 @@ router.post('/new', async (req, res, /* next */) => {
   const payload = req.body;
   const { user, restaurant } = req; // isteği  kim yaptı
 
-  if (isEmpty(payload) || !payload.table_id || !payload.items) {
+  if (isEmpty(payload) || !payload.tableUuid || !payload.items) {
     const err = constraints.errors.MISSING_ARGS;
     return res.status(err.code).send(err);
   }
@@ -117,7 +119,12 @@ router.post('/new', async (req, res, /* next */) => {
   // save order to db
   const order = await db.Order.create({
     uuid: _uuid(),
-    items: items.map(item => JSON.stringify(item)).join(', '),
+    // items: items.map(item => JSON.stringify(item)).join(', '),
+    items,
+    isPaid : false,
+    tableUuid: "af92bacf-a01a-4903-99d6-2887359c1d23",
+    createdAt: moment().format('YYYY-MM-DD HH:mm:ss'),
+    updatedAt: moment().format('YYYY-MM-DD HH:mm:ss'),
     restaurantUuid: restaurant && restaurant.uuid || restaurantUuid,
     userUuid: user && user.uuid || userUuid
   });

@@ -28,6 +28,10 @@ module.exports = {
         allowNull: true,
         type: Sequelize.STRING
       },
+      itemType: {
+        allowNull: false,
+        type: Sequelize.STRING
+      },
       restaurantUuid: {
         allowNull: false,
         type: Sequelize.UUID,

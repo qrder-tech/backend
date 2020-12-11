@@ -54,7 +54,7 @@ router.post('/registration', async (req, res, /* next */) => {
   let err;
 
   // check payload
-  if (!type || isEmpty(payload) || !payload.username || !payload.password || !payload.name || !payload.email) {
+  if (!type || isEmpty(payload) || !payload.username || !payload.password || !payload.name || !payload.email || !payload.restaurantType) {
     err = constraints.errors.MISSING_ARGS;
   }
 
@@ -91,6 +91,31 @@ router.post('/registration', async (req, res, /* next */) => {
     return res.status(err.code).send(err);
   }
 
+  
+  if  (!payload.tableCount)
+  {
+  // register user
+    const credentialsRest = removeEmptyKeys({
+      uuid: uuid(),
+      name: payload.name,
+      surname: payload.surname,
+      address: payload.address,
+      phoneNumber: payload.phoneNumber,
+      email: payload.email,
+      username: payload.username,
+      password: md5(payload.password),
+      restaurantType : payload.restaurantType
+    });
+    const userRest = await db[type].create(credentialsRest);
+
+    if (!userRest) {
+      err = constraints.errors.UNKNOWN;
+      return res.status(err.code).send(err);
+    }
+
+    return res.send({ success: true });
+  }
+  
   // register user
   const credentials = removeEmptyKeys({
     uuid: uuid(),
@@ -100,7 +125,9 @@ router.post('/registration', async (req, res, /* next */) => {
     phoneNumber: payload.phoneNumber,
     email: payload.email,
     username: payload.username,
-    password: md5(payload.password)
+    password: md5(payload.password),
+    restaurantType : payload.restaurantType,
+    tableCount : payload.tableCount
   });
   const user = await db[type].create(credentials);
 
@@ -110,6 +137,7 @@ router.post('/registration', async (req, res, /* next */) => {
   }
 
   return res.send({ success: true });
+
 });
 
 module.exports = router;

@@ -1,6 +1,6 @@
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable('Orders', {
+    await queryInterface.createTable('Services', {
       uuid: {
         primaryKey: true,
         type: Sequelize.UUID,
@@ -8,32 +8,17 @@ module.exports = {
           isUUID: 4,
         },
       },
-      items: {
+      name: {
         allowNull: false,
         type: Sequelize.STRING
       },
-      isPaid: {
-        defaultValue: false,
-        type: Sequelize.BOOLEAN
-      },
-      restaurantUuid: {
+      tableUuid: {
         allowNull: false,
         type: Sequelize.UUID,
         references: {
-          model: 'Restaurants',
+          model: 'Tables',
           key: 'uuid',
-          as: 'restaurantUuid'
-        },
-        onUpdate: 'cascade',
-        onDelete: 'cascade'
-      },
-      userUuid: {
-        allowNull: false,
-        type: Sequelize.UUID,
-        references: {
-          model: 'Users',
-          key: 'uuid',
-          as: 'userUuid'
+          as: 'tableUuid'
         },
         onUpdate: 'cascade',
         onDelete: 'cascade'
@@ -45,10 +30,10 @@ module.exports = {
       updatedAt: {
         allowNull: false,
         type: Sequelize.DATE
-      }
+      },
     });
   },
   down: async (queryInterface /* Sequelize */) => {
-    await queryInterface.dropTable('Orders');
+    await queryInterface.dropTable('Services');
   }
 };

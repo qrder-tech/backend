@@ -1,6 +1,6 @@
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable('Items', {
+    await queryInterface.createTable('Subtopics', {
       uuid: {
         primaryKey: true,
         type: Sequelize.UUID,
@@ -12,33 +12,6 @@ module.exports = {
         allowNull: false,
         type: Sequelize.STRING
       },
-      price: {
-        allowNull: false,
-        type: Sequelize.FLOAT
-      },
-      desc: {
-        allowNull: false,
-        type: Sequelize.TEXT
-      },
-      img: {
-        allowNull: true,
-        type: Sequelize.STRING
-      },
-      metadata: {
-        allowNull: true,
-        type: Sequelize.STRING
-      },
-      subtopicUuid: {
-        allowNull: false,
-        type: Sequelize.UUID,
-        references: {
-          model: 'Subtopics',
-          key: 'uuid',
-          as: 'subtopicUuid'
-        },
-        onUpdate: 'cascade',
-        onDelete: 'cascade'
-      },
       restaurantUuid: {
         allowNull: false,
         type: Sequelize.UUID,
@@ -48,7 +21,7 @@ module.exports = {
           as: 'restaurantUuid'
         },
         onUpdate: 'cascade',
-        onDelete: 'cascade'
+        onDelete : "cascade"
       },
       createdAt: {
         allowNull: false,
@@ -61,6 +34,6 @@ module.exports = {
     });
   },
   down: async (queryInterface /* Sequelize */) => {
-    await queryInterface.dropTable('Items');
+    await queryInterface.dropTable('Subtopics');
   }
 };

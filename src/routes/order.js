@@ -119,8 +119,7 @@ router.post('/new', async (req, res, /* next */) => {
   // save order to db
   const order = await db.Order.create({
     uuid: _uuid(),
-    // items: items.map(item => JSON.stringify(item)).join(', '),
-    items,
+    items: items.map(item => JSON.stringify(item)).join(', '),
     isPaid : false,
     tableUuid: "af92bacf-a01a-4903-99d6-2887359c1d23",
     createdAt: moment().format('YYYY-MM-DD HH:mm:ss'),

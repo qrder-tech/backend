@@ -9,6 +9,7 @@ import { v4 as _uuid } from 'uuid';
 import { /* generateJwtToken */ reduceUserDetails } from '../lib/utils';
 import constraints from '../lib/constraints';
 import { db } from '../lib/clients';
+// import { parse } from 'dotenv/types';
 
 const moment = require('moment');
 
@@ -33,7 +34,7 @@ router.get('/', async (req, res, /* next */) => {
 router.get('/me', async (req, res, /* next */) => {
   const { restaurant } = req;
 
-  const restaurantDetails = await db.Restaurant.findByPk(restaurant.uuid, { include: { as: 'Menu', model: db.Item } });
+  const restaurantDetails = await db.Restaurant.findByPk(restaurant.uuid);
   const reduced = reduceUserDetails(restaurantDetails.dataValues);
   return res.send(reduced);
 });
@@ -61,8 +62,12 @@ router.post('/me', async (req, res, /* next */) => {
 router.get('/menu', async (req, res,) => {
   const { restaurant } = req;
 
-  const menu = await db.Item.findAll({ where: { restaurantUuid: restaurant.uuid } });
-  return res.send({ menu });
+  const menu = await db.Subtopic.findAll({ where: { restaurantUuid: restaurant.uuid } ,  include: {as: 'Items', model: db.Item} });
+  /*
+  var daomenu = {uuid: menu.uuid, subtopics: []};
+  menu.subtopics.map((Subtopic ) => {daomenu.subtopics.push(Subtopic)});
+*/
+  return res.send({ menu}); // var yeni table ekledim
 });
 
 router.get('/orders', async (req, res, /* next */) => {
@@ -127,11 +132,10 @@ router.post('/tables', async (req, res, /* next */) => {
 
 router.get('/item', async (req, res, /* next */) => {
 
-  const { restaurant } = req;
   const {uuid} = req.query;
   
   const item = await db.Item.findAll({
-    where: {uuid ,  restaurantUuid : restaurant.uuid}
+    where: {uuid}
   });
   if( item === null)
   {
@@ -158,7 +162,6 @@ router.post('/item', async (req, res, /* next */) => {
         desc: payload.desc , 
         metadata : payload.metadata ,
         img: payload.img,
-        itemType: payload.itemType,
         updatedAt: moment().format('YYYY-MM-DD HH:mm:ss')
 
       }, {
@@ -168,7 +171,7 @@ router.post('/item', async (req, res, /* next */) => {
     return res.send({ success: true });
   
   }
-  if ( !payload.name || !payload.price || !payload.desc || !payload.itemType)
+  if ( !payload.name || !payload.price || !payload.desc || !payload.subtopicUuid)
   {
     const err = constraints.errors.MISSING_ARGS;
     return res.status(err.code).send(err);
@@ -182,6 +185,7 @@ router.post('/item', async (req, res, /* next */) => {
     desc: payload.desc , 
     metadata : payload.metadata ,
     img: payload.img,
+    subtopicUuid: payload.subtopicUuid,
     restaurantUuid : restaurant.uuid,
     itemType : payload.itemType,
     createdAt: moment().format('YYYY-MM-DD HH:mm:ss'),

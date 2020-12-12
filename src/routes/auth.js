@@ -9,6 +9,8 @@ import { convertType, generateJwtToken, removeEmptyKeys } from '../lib/utils';
 import constraints from '../lib/constraints';
 import { db } from '../lib/clients';
 
+const moment = require('moment');
+
 const router = express.Router();
 
 const AUTH_TYPES = {
@@ -91,34 +93,10 @@ router.post('/registration', async (req, res, /* next */) => {
     return res.status(err.code).send(err);
   }
 
-  
-  if  (!payload.tableCount)
-  {
-  // register user
-    const credentialsRest = removeEmptyKeys({
-      uuid: uuid(),
-      name: payload.name,
-      surname: payload.surname,
-      address: payload.address,
-      phoneNumber: payload.phoneNumber,
-      email: payload.email,
-      username: payload.username,
-      password: md5(payload.password),
-      restaurantType : payload.restaurantType
-    });
-    const userRest = await db[type].create(credentialsRest);
-
-    if (!userRest) {
-      err = constraints.errors.UNKNOWN;
-      return res.status(err.code).send(err);
-    }
-
-    return res.send({ success: true });
-  }
-  
+  const resUuid = uuid();
   // register user
   const credentials = removeEmptyKeys({
-    uuid: uuid(),
+    uuid: resUuid,
     name: payload.name,
     surname: payload.surname,
     address: payload.address,
@@ -127,10 +105,21 @@ router.post('/registration', async (req, res, /* next */) => {
     username: payload.username,
     password: md5(payload.password),
     restaurantType : payload.restaurantType,
-    tableCount : payload.tableCount
   });
   const user = await db[type].create(credentials);
 
+  // if restaurant is self service dummy table is created...
+  const tableName = `${payload.name  }dummy`;
+  if ( payload.restaurantType === "selfservice")
+  {
+    await db.Table.create({
+      uuid: uuid(),
+      name: tableName,
+      restaurantUuid: resUuid,
+      createdAt: moment().format('YYYY-MM-DD HH:mm:ss'),
+      updatedAt: moment().format('YYYY-MM-DD HH:mm:ss')
+    });
+  }
   if (!user) {
     err = constraints.errors.UNKNOWN;
     return res.status(err.code).send(err);

@@ -8,8 +8,11 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      Restaurant.hasMany(models.Item, { as: 'Menu', foreignKey: 'restaurantUuid' });
       Restaurant.hasMany(models.Order, { as: 'Orders', foreignKey: 'restaurantUuid' });
+      Restaurant.hasMany(models.Table, { as: 'Tables', foreignKey: 'restaurantUuid' });
+      Restaurant.hasMany(models.Subtopic, { as: 'Subtopics', foreignKey: 'restaurantUuid' });
+      Restaurant.hasMany(models.Item, { as: 'restaurantItems', foreignKey: 'restaurantUuid' });
+
     }
   };
 
@@ -44,10 +47,6 @@ module.exports = (sequelize, DataTypes) => {
     password: {
       allowNull: false,
       type: DataTypes.STRING
-    },
-    tableCount: {
-      allowNull: true,
-      type: DataTypes.INTEGER
     },
     restaurantType: {
       allowNull: false,

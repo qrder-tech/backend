@@ -10,7 +10,7 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       Order.belongsTo(models.Restaurant, { as: 'Orders', foreignKey: 'restaurantUuid' });
       Order.belongsTo(models.User, { as: 'UserOrders', foreignKey: 'userUuid' });
-      Order.belongsTo(models.User, { as: 'RecentOrders', foreignKey: 'tableUuid' });
+      Order.belongsTo(models.Table, { as: 'RecentOrders', foreignKey: 'tableUuid' });
     }
   };
   Order.init({

@@ -8,7 +8,9 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      Item.belongsTo(models.Restaurant, { as: 'Menu', foreignKey: 'restaurantUuid' });
+      Item.belongsTo(models.Subtopic, { as: 'Items', foreignKey: 'subtopicUuid' });
+      Item.belongsTo(models.Restaurant, { as: 'restaurantItems', foreignKey: 'restaurantUuid' });
+
     }
   };
   Item.init({
@@ -39,10 +41,18 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: true,
       type: DataTypes.STRING
     },
-    itemType: {
+    subtopicUuid: {
       allowNull: false,
-      type: DataTypes.STRING
+      type: DataTypes.UUID,
+      references: {
+        model: 'Subtopics',
+        key: 'uuid',
+        as: 'subtopicUuid'
+      },
+      onUpdate: 'cascade',
+      onDelete: 'cascade'
     },
+    
     restaurantUuid: {
       allowNull: false,
       type: DataTypes.UUID,

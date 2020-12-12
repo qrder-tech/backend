@@ -1,23 +1,19 @@
-
-const {
-  Model
-} = require('sequelize');
+const { Model } = require('sequelize');
 
 module.exports = (sequelize, DataTypes) => {
-  class Table extends Model {
-    /**
+  class Subtopic extends Model {
+    /*
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      Table.belongsTo(models.Restaurant, { as: 'Tables', foreignKey: 'restaurantUuid' });
-      Table.hasMany(models.Order, { as: 'RecentOrders', foreignKey: 'tableUuid' });
-      Table.hasMany(models.Service, { as: 'Services', foreignKey: 'tableUuid' });
-
+      Subtopic.belongsTo(models.Restaurant, { as: 'Subtopics', foreignKey: 'restaurantUuid' });
+      Subtopic.hasMany(models.Item, { as: 'Items', foreignKey: 'subtopicUuid' });
     }
-  };
-  Table.init({
+  }
+
+  Subtopic.init({
     uuid: {
       primaryKey: true,
       type: DataTypes.UUID,
@@ -37,11 +33,10 @@ module.exports = (sequelize, DataTypes) => {
         key: 'uuid',
         as: 'restaurantUuid'
       },
-      
+        
       onUpdate: 'cascade',
       onDelete: 'cascade'
     },
-    
     createdAt: {
       allowNull: false,
       type: DataTypes.DATE
@@ -52,7 +47,8 @@ module.exports = (sequelize, DataTypes) => {
     },
   }, {
     sequelize,
-    modelName: 'Table',
+    modelName: 'Subtopic',
   });
-  return Table;
+
+  return Subtopic;
 };

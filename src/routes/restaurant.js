@@ -26,7 +26,7 @@ router.get('/', async (req, res, /* next */) => {
     return res.status(err.code).send(err);
   }
 
-  const restaurantDetails = await db.Restaurant.findByPk(resUuid, { include: { as: 'Menu', model: db.Item } });
+  const restaurantDetails = await db.Restaurant.findByPk(resUuid);
   const reduced = reduceUserDetails(restaurantDetails.dataValues);
   return res.send(reduced);
 });

@@ -79,7 +79,7 @@ router.get('/orders', async (req, res, /* next */) => {
       ['isPaid']
     ]
   });
-  await orders.map((order) => { order.items = JSON.parse(`[${  order.items  }]`); return null;}); 
+  await orders.map((order) => { order.items = JSON.parse(`[${  order.items  }]`); return null}); 
   return res.send({ orders });
 });
 

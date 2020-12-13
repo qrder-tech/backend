@@ -15,7 +15,7 @@ module.exports = {
   }, {
     uuid: 'c49532af-3256-442f-9f0d-aa4300e7c400',
     name: 'Lehmacun',
-    price: 10.00,
+    price: 10.00, 
     desc: 'Lehmacun from anteb to bilkent',
     img: '',
     metadata: 'aci',

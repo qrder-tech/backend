@@ -46,7 +46,7 @@ module.exports = {
         "metadata": "1",
         "quantity": 2
       }
-    ].map(item => JSON.stringify(item)).join(', '),
+    ].map(item => JSON.stringify(item)).join(', '), 
     isPaid: true,
     restaurantUuid: 'b239690e-dfa1-4c6b-9e19-45c182d2b66b',
     userUuid: '3d9b7b60-741f-45aa-b94a-68daa30b7ea6',

@@ -63,6 +63,7 @@ router.get('/menu', async (req, res,) => {
   const { restaurant } = req;
 
   const menu = await db.Subtopic.findAll({ where: { restaurantUuid: restaurant.uuid } ,  include: {as: 'Items', model: db.Item} });
+
   /*
   var daomenu = {uuid: menu.uuid, subtopics: []};
   menu.subtopics.map((Subtopic ) => {daomenu.subtopics.push(Subtopic)});
@@ -72,14 +73,13 @@ router.get('/menu', async (req, res,) => {
 
 router.get('/orders', async (req, res, /* next */) => {
   const { restaurant } = req;
-
   const orders = await db.Order.findAll({
     where: { restaurantUuid: restaurant.uuid },
     order: [
       ['isPaid']
     ]
   });
-
+  await orders.map((order) => { order.items = JSON.parse("[" + order.items + "]")}); 
   return res.send({ orders });
 });
 

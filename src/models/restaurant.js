@@ -12,9 +12,8 @@ module.exports = (sequelize, DataTypes) => {
       Restaurant.hasMany(models.Table, { as: 'Tables', foreignKey: 'restaurantUuid' });
       Restaurant.hasMany(models.Subtopic, { as: 'Subtopics', foreignKey: 'restaurantUuid' });
       Restaurant.hasMany(models.Item, { as: 'restaurantItems', foreignKey: 'restaurantUuid' });
-
     }
-  };
+  }
 
   Restaurant.init({
     uuid: {
@@ -26,39 +25,39 @@ module.exports = (sequelize, DataTypes) => {
     },
     name: {
       allowNull: false,
-      type: DataTypes.STRING
+      type: DataTypes.STRING,
     },
     address: {
       allowNull: false,
-      type: DataTypes.STRING
+      type: DataTypes.STRING,
     },
     phoneNumber: {
       allowNull: false,
-      type: DataTypes.STRING
+      type: DataTypes.STRING,
     },
     email: {
       allowNull: false,
-      type: DataTypes.STRING
+      type: DataTypes.STRING,
     },
     username: {
       allowNull: false,
-      type: DataTypes.STRING
+      type: DataTypes.STRING,
     },
     password: {
       allowNull: false,
-      type: DataTypes.STRING
+      type: DataTypes.STRING,
     },
     restaurantType: {
       allowNull: false,
-      type: DataTypes.STRING
+      type: DataTypes.STRING,
     },
     createdAt: {
       allowNull: false,
-      type: DataTypes.DATE
+      type: DataTypes.DATE,
     },
     updatedAt: {
       allowNull: false,
-      type: DataTypes.DATE
+      type: DataTypes.DATE,
     },
   }, {
     sequelize,

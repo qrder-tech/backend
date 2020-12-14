@@ -4,14 +4,14 @@
     "node": true
   },
   "extends": [
-    "airbnb-base",
-    "prettier"
+    "airbnb-base"
   ],
   "parserOptions": {
     "ecmaVersion": 12,
     "sourceType": "module"
   },
   "rules": {
+    "brace-style": 2,
     "global-require": 0,
     "import/no-dynamic-require": 0,
     "import/prefer-default-export": 0,

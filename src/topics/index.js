@@ -21,8 +21,8 @@ export const initializeTopics = () => {
         credentials: {
           type: parsed[0],
           token: parsed.slice(1).join('.'),
-          uuid: getUuidFromToken(parsed.slice(1).join('.'))
-        }
+          uuid: getUuidFromToken(parsed.slice(1).join('.')),
+        },
       };
 
       if (args.credentials.type === 'restaurant') {

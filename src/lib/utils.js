@@ -17,7 +17,7 @@ export const reduceUserDetails = (user) => {
 export const removeEmptyKeys = (obj) => omitBy(obj, isNil);
 
 export const formatArguments = (args) => Object.keys(args).reduce((obj, key) => {
-  obj[key] = args[key] && args[key].trim() || null;
+  obj[key] = (args[key] && args[key].trim()) || null;
   return obj;
 }, {});
 
@@ -30,10 +30,8 @@ export const parseMqttMessage = (topic, message) => {
       token: parsedTopic.slice(1).join('.'),
       uuid: getUuidFromToken(parsedTopic.slice(1).join('.')),
     },
-    message: JSON.parse(message)
+    message: JSON.parse(message),
   };
 };
 
-export const convertType = (text) => {
-  return text.charAt(0).toUpperCase() + text.slice(1).toLowerCase();
-}; 
+export const convertType = (text) => text.charAt(0).toUpperCase() + text.slice(1).toLowerCase();

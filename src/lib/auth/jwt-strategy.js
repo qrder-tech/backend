@@ -21,7 +21,10 @@ const strategy = new JwtStrategy(params, async (payload, done) => {
     return done(constraints.errors.UNAUTH, false);
   }
 
-  return done(null, { user: user && user.dataValues, restaurant: restaurant && restaurant.dataValues });
+  return done(null, {
+    user: user && user.dataValues,
+    restaurant: restaurant && restaurant.dataValues,
+  });
 });
 
 export default strategy;

@@ -2,11 +2,11 @@ import mqtt from 'mqtt';
 import config from '../../config';
 
 const mq = {};
-const clientId = `qrder-server${  config.env !== 'production' ? `_${config.env}_${Math.random().toString().substring(2, 5)}` : ''}`;
+const clientId = `qrder-server${config.env !== 'production' ? `_${config.env}_${Math.random().toString().substring(2, 5)}` : ''}`;
 
 mq.connected = false;
 mq.clientId = clientId;
-mq.client = mqtt.connect(`mqtt://${  config.mqtt.HOSTNAME}`, {
+mq.client = mqtt.connect(`mqtt://${config.mqtt.HOSTNAME}`, {
   clientId,
   username: config.mqtt.USERNAME,
   password: config.mqtt.PASSWORD,

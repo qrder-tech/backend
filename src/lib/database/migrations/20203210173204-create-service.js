@@ -10,7 +10,7 @@ module.exports = {
       },
       name: {
         allowNull: false,
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       tableUuid: {
         allowNull: false,
@@ -18,22 +18,22 @@ module.exports = {
         references: {
           model: 'Tables',
           key: 'uuid',
-          as: 'tableUuid'
+          as: 'tableUuid',
         },
         onUpdate: 'cascade',
-        onDelete: 'cascade'
+        onDelete: 'cascade',
       },
       createdAt: {
         allowNull: false,
-        type: Sequelize.DATE
+        type: Sequelize.DATE,
       },
       updatedAt: {
         allowNull: false,
-        type: Sequelize.DATE
+        type: Sequelize.DATE,
       },
     });
   },
   down: async (queryInterface /* Sequelize */) => {
     await queryInterface.dropTable('Services');
-  }
+  },
 };

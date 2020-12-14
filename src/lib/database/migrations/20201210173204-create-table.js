@@ -1,5 +1,5 @@
 module.exports = {
-  up: async (queryInterface,  Sequelize ) => {
+  up: async (queryInterface, Sequelize) => {
     await queryInterface.createTable('Tables', {
       uuid: {
         primaryKey: true,
@@ -16,29 +16,29 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: true,
       },
-      
+
       restaurantUuid: {
         allowNull: false,
         type: Sequelize.UUID,
         references: {
           model: 'Restaurants',
           key: 'uuid',
-          as: 'restaurantUuid'
+          as: 'restaurantUuid',
         },
         onUpdate: 'cascade',
-        onDelete : "cascade"
+        onDelete: 'cascade',
       },
       createdAt: {
         allowNull: false,
-        type: Sequelize.DATE
+        type: Sequelize.DATE,
       },
       updatedAt: {
         allowNull: false,
-        type: Sequelize.DATE
+        type: Sequelize.DATE,
       },
     });
   },
-  down: async (queryInterface, /* Sequelize */) => {
+  down: async (queryInterface /* Sequelize */) => {
     await queryInterface.dropTable('Tables');
-  }
+  },
 };

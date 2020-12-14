@@ -13,7 +13,7 @@ const moment = require('moment');
 const router = express.Router();
 
 /* GET users listing. */
-router.get("/", async (req, res, /* next */) => {
+router.get('/', async (req, res /* next */) => {
   const { uuid } = req.query;
   const { user, restaurant } = req; // isteği  kim yaptı
 
@@ -27,15 +27,15 @@ router.get("/", async (req, res, /* next */) => {
       uuid,
       [Op.or]: [
         { userUuid: user && user.uuid },
-        { restaurantUuid: restaurant && restaurant.uuid }
-      ]
-    }
+        { restaurantUuid: restaurant && restaurant.uuid },
+      ],
+    },
   });
 
   return res.send(orderDetails);
 });
 
-router.post('/new', async (req, res, /* next */) => {
+router.post('/new', async (req, res /* next */) => {
   const payload = req.body;
   const { user, restaurant } = req; // isteği  kim yaptı
 
@@ -89,7 +89,7 @@ router.post('/new', async (req, res, /* next */) => {
 
   const items = [];
   try {
-    await Promise.all(payload.items.map(async item => {
+    await Promise.all(payload.items.map(async (item) => {
       if (!item.metadata || !item.quantity) {
         const err = constraints.errors.INVALID_ARGS;
         err.data = item;
@@ -119,13 +119,13 @@ router.post('/new', async (req, res, /* next */) => {
   // save order to db
   const order = await db.Order.create({
     uuid: _uuid(),
-    items: items.map(item => JSON.stringify(item)).join(', '),
-    isPaid : false,
-    tableUuid: "af92bacf-a01a-4903-99d6-2887359c1d23",
+    items: items.map((item) => JSON.stringify(item)).join(', '),
+    isPaid: false,
+    tableUuid: 'af92bacf-a01a-4903-99d6-2887359c1d23',
     createdAt: moment().format('YYYY-MM-DD HH:mm:ss'),
     updatedAt: moment().format('YYYY-MM-DD HH:mm:ss'),
-    restaurantUuid: restaurant && restaurant.uuid || restaurantUuid,
-    userUuid: user && user.uuid || userUuid
+    restaurantUuid: (restaurant && restaurant.uuid) || restaurantUuid,
+    userUuid: (user && user.uuid) || userUuid,
   });
 
   if (!order) {

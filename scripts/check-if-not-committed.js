@@ -6,12 +6,12 @@ const check = (stdout) => {
 
   if (code) {
     console.log(
-      "\t",
-      "\x1b[31m",
-      "[ERROR]",
-      "\x1b[0m",
-      "You have uncommitted files, please commit your changes!",
-      "\n"
+      '\t',
+      '\x1b[31m',
+      '[ERROR]',
+      '\x1b[0m',
+      'You have uncommitted files, please commit your changes!',
+      '\n',
     );
   }
 

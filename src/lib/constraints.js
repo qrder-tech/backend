@@ -6,6 +6,6 @@ export default {
     INVALID_ARGS: { code: 400, msg: 'Invalid arguments' },
     DUPLICATED_ARGS: { code: 400, msg: 'Duplicated arguments' },
     VALIDATOR_ARGS: { code: 400, msg: 'Arguments cannot pass validator' },
-    UNKNOWN: { code: 400, msg: 'Unknown error' }
-  }
+    UNKNOWN: { code: 400, msg: 'Unknown error' },
+  },
 };

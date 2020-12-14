@@ -10,7 +10,7 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       Service.belongsTo(models.Table, { as: 'Services', foreignKey: 'tableUuid' });
     }
-  };
+  }
   Service.init({
     uuid: {
       primaryKey: true,
@@ -21,7 +21,7 @@ module.exports = (sequelize, DataTypes) => {
     },
     name: {
       allowNull: false,
-      type: DataTypes.STRING
+      type: DataTypes.STRING,
     },
     tableUuid: {
       allowNull: false,
@@ -29,18 +29,18 @@ module.exports = (sequelize, DataTypes) => {
       references: {
         model: 'Tables',
         key: 'uuid',
-        as: 'tableUuid'
+        as: 'tableUuid',
       },
       onUpdate: 'cascade',
-      onDelete: 'cascade'
+      onDelete: 'cascade',
     },
     createdAt: {
       allowNull: false,
-      type: DataTypes.DATE
+      type: DataTypes.DATE,
     },
     updatedAt: {
       allowNull: false,
-      type: DataTypes.DATE
+      type: DataTypes.DATE,
     },
   }, {
     sequelize,

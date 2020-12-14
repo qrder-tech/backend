@@ -10,5 +10,5 @@ module.exports = {
     createdAt: moment().format('YYYY-MM-DD HH:mm:ss'),
     updatedAt: moment().format('YYYY-MM-DD HH:mm:ss'),
   }], {}),
-  down: async (queryInterface /* Sequelize */) => queryInterface.bulkDelete('Samples', null, {})
+  down: async (queryInterface /* Sequelize */) => queryInterface.bulkDelete('Samples', null, {}),
 };

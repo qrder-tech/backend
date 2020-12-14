@@ -11,7 +11,7 @@ module.exports = {
     email: 'kebab@bilkent.com',
     username: 'postman',
     password: md5('postman'),
-    restaurantType : "self",
+    restaurantType: 'self',
     createdAt: moment().format('YYYY-MM-DD HH:mm:ss'),
     updatedAt: moment().format('YYYY-MM-DD HH:mm:ss'),
   }, {
@@ -22,9 +22,9 @@ module.exports = {
     email: 'lokal71@ankuva.com',
     username: 'lokal71',
     password: md5('lokal71'),
-    restaurantType : "normal",
+    restaurantType: 'normal',
     createdAt: moment().format('YYYY-MM-DD HH:mm:ss'),
     updatedAt: moment().format('YYYY-MM-DD HH:mm:ss'),
   }], {}),
-  down: async (queryInterface /* Sequelize */) => queryInterface.bulkDelete('Restaurants', null, {})
+  down: async (queryInterface /* Sequelize */) => queryInterface.bulkDelete('Restaurants', null, {}),
 };

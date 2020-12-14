@@ -10,23 +10,23 @@ module.exports = {
       },
       name: {
         allowNull: false,
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       price: {
         allowNull: false,
-        type: Sequelize.FLOAT
+        type: Sequelize.FLOAT,
       },
       desc: {
         allowNull: false,
-        type: Sequelize.TEXT
+        type: Sequelize.TEXT,
       },
       img: {
         allowNull: true,
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       metadata: {
         allowNull: true,
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       subtopicUuid: {
         allowNull: false,
@@ -34,10 +34,10 @@ module.exports = {
         references: {
           model: 'Subtopics',
           key: 'uuid',
-          as: 'subtopicUuid'
+          as: 'subtopicUuid',
         },
         onUpdate: 'cascade',
-        onDelete: 'cascade'
+        onDelete: 'cascade',
       },
       restaurantUuid: {
         allowNull: false,
@@ -45,22 +45,22 @@ module.exports = {
         references: {
           model: 'Restaurants',
           key: 'uuid',
-          as: 'restaurantUuid'
+          as: 'restaurantUuid',
         },
         onUpdate: 'cascade',
-        onDelete: 'cascade'
+        onDelete: 'cascade',
       },
       createdAt: {
         allowNull: false,
-        type: Sequelize.DATE
+        type: Sequelize.DATE,
       },
       updatedAt: {
         allowNull: false,
-        type: Sequelize.DATE
-      }
+        type: Sequelize.DATE,
+      },
     });
   },
   down: async (queryInterface /* Sequelize */) => {
     await queryInterface.dropTable('Items');
-  }
+  },
 };

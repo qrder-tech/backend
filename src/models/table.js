@@ -1,6 +1,5 @@
-
 const {
-  Model
+  Model,
 } = require('sequelize');
 
 module.exports = (sequelize, DataTypes) => {
@@ -14,9 +13,8 @@ module.exports = (sequelize, DataTypes) => {
       Table.belongsTo(models.Restaurant, { as: 'Tables', foreignKey: 'restaurantUuid' });
       Table.hasMany(models.Order, { as: 'RecentOrders', foreignKey: 'tableUuid' });
       Table.hasMany(models.Service, { as: 'Services', foreignKey: 'tableUuid' });
-
     }
-  };
+  }
   Table.init({
     uuid: {
       primaryKey: true,
@@ -27,7 +25,7 @@ module.exports = (sequelize, DataTypes) => {
     },
     name: {
       allowNull: false,
-      type: DataTypes.STRING
+      type: DataTypes.STRING,
     },
     restaurantUuid: {
       allowNull: false,
@@ -35,20 +33,20 @@ module.exports = (sequelize, DataTypes) => {
       references: {
         model: 'Restaurants',
         key: 'uuid',
-        as: 'restaurantUuid'
+        as: 'restaurantUuid',
       },
-      
+
       onUpdate: 'cascade',
-      onDelete: 'cascade'
+      onDelete: 'cascade',
     },
-    
+
     createdAt: {
       allowNull: false,
-      type: DataTypes.DATE
+      type: DataTypes.DATE,
     },
     updatedAt: {
       allowNull: false,
-      type: DataTypes.DATE
+      type: DataTypes.DATE,
     },
   }, {
     sequelize,

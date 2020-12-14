@@ -15,15 +15,15 @@ const router = express.Router();
 
 const AUTH_TYPES = {
   USER: 'User',
-  RESTAURANT: 'Restaurant'
+  RESTAURANT: 'Restaurant',
 };
 
 /* GET users listing. */
-router.get('/', (req, res, /* next */) => {
+router.get('/', (req, res /* next */) => {
   res.send({ status: 1 });
 });
 
-router.post('/login', async (req, res, /* next */) => {
+router.post('/login', async (req, res /* next */) => {
   const { type: _type } = req.query;
   const type = convertType(_type);
   const payload = req.body;
@@ -38,7 +38,7 @@ router.post('/login', async (req, res, /* next */) => {
       username: payload.username,
       password: md5(payload.password),
     },
-  });;
+  });
 
   if (!user) {
     const err = constraints.errors.INVALID_ARGS;
@@ -49,14 +49,20 @@ router.post('/login', async (req, res, /* next */) => {
   return res.send({ token });
 });
 
-router.post('/registration', async (req, res, /* next */) => {
+router.post('/registration', async (req, res /* next */) => {
   const { type: _type } = req.query;
   const type = convertType(_type);
   const payload = req.body;
   let err;
 
   // check payload
-  if (!type || isEmpty(payload) || !payload.username || !payload.password || !payload.name || !payload.email || !payload.restaurantType) {
+  if (!type
+    || isEmpty(payload)
+    || !payload.username
+    || !payload.password
+    || !payload.name
+    || !payload.email
+    || !payload.restaurantType) {
     err = constraints.errors.MISSING_ARGS;
   }
 
@@ -83,9 +89,9 @@ router.post('/registration', async (req, res, /* next */) => {
     where: {
       [Op.or]: [
         { username: payload.username },
-        { email: payload.email }
-      ]
-    }
+        { email: payload.email },
+      ],
+    },
   });
 
   if (isExist) {
@@ -104,20 +110,19 @@ router.post('/registration', async (req, res, /* next */) => {
     email: payload.email,
     username: payload.username,
     password: md5(payload.password),
-    restaurantType : payload.restaurantType,
+    restaurantType: payload.restaurantType,
   });
   const user = await db[type].create(credentials);
 
   // if restaurant is self service dummy table is created...
-  const tableName = `${payload.name  }dummy`;
-  if ( payload.restaurantType === "selfservice")
-  {
+  const tableName = `${payload.name}dummy`;
+  if (payload.restaurantType === 'selfservice') {
     await db.Table.create({
       uuid: uuid(),
       name: tableName,
       restaurantUuid: resUuid,
       createdAt: moment().format('YYYY-MM-DD HH:mm:ss'),
-      updatedAt: moment().format('YYYY-MM-DD HH:mm:ss')
+      updatedAt: moment().format('YYYY-MM-DD HH:mm:ss'),
     });
   }
   if (!user) {
@@ -126,7 +131,6 @@ router.post('/registration', async (req, res, /* next */) => {
   }
 
   return res.send({ success: true });
-
 });
 
 module.exports = router;

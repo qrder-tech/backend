@@ -12,7 +12,7 @@ module.exports = (sequelize, DataTypes) => {
       Order.belongsTo(models.User, { as: 'UserOrders', foreignKey: 'userUuid' });
       Order.belongsTo(models.Table, { as: 'RecentOrders', foreignKey: 'tableUuid' });
     }
-  };
+  }
   Order.init({
     uuid: {
       primaryKey: true,
@@ -23,11 +23,11 @@ module.exports = (sequelize, DataTypes) => {
     },
     items: {
       allowNull: false,
-      type: DataTypes.STRING
+      type: DataTypes.STRING,
     },
     isPaid: {
       defaultValue: false,
-      type: DataTypes.BOOLEAN
+      type: DataTypes.BOOLEAN,
     },
     restaurantUuid: {
       allowNull: false,
@@ -35,10 +35,10 @@ module.exports = (sequelize, DataTypes) => {
       references: {
         model: 'Restaurants',
         key: 'uuid',
-        as: 'restaurantUuid'
+        as: 'restaurantUuid',
       },
       onUpdate: 'cascade',
-      onDelete: 'cascade'
+      onDelete: 'cascade',
     },
     userUuid: {
       allowNull: false,
@@ -46,10 +46,10 @@ module.exports = (sequelize, DataTypes) => {
       references: {
         model: 'Users',
         key: 'uuid',
-        as: 'userUuid'
+        as: 'userUuid',
       },
       onUpdate: 'cascade',
-      onDelete: 'cascade'
+      onDelete: 'cascade',
     },
     tableUuid: {
       allowNull: false,
@@ -57,18 +57,18 @@ module.exports = (sequelize, DataTypes) => {
       references: {
         model: 'Tables',
         key: 'uuid',
-        as: 'tableUuid'
+        as: 'tableUuid',
       },
       onUpdate: 'cascade',
-      onDelete: 'cascade'
+      onDelete: 'cascade',
     },
     createdAt: {
       allowNull: false,
-      type: DataTypes.DATE
+      type: DataTypes.DATE,
     },
     updatedAt: {
       allowNull: false,
-      type: DataTypes.DATE
+      type: DataTypes.DATE,
     },
   }, {
     sequelize,

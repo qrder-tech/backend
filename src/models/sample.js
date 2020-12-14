@@ -10,7 +10,7 @@ module.exports = (sequelize, DataTypes) => {
     static associate(/* models */) {
       // define association here
     }
-  };
+  }
 
   Sample.init({
     uuid: {
@@ -32,7 +32,7 @@ module.exports = (sequelize, DataTypes) => {
     email: {
       allowNull: false,
       type: DataTypes.STRING,
-    }
+    },
   }, {
     sequelize,
     modelName: 'Sample',

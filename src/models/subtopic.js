@@ -23,7 +23,7 @@ module.exports = (sequelize, DataTypes) => {
     },
     name: {
       allowNull: false,
-      type: DataTypes.STRING
+      type: DataTypes.STRING,
     },
     restaurantUuid: {
       allowNull: false,
@@ -31,19 +31,19 @@ module.exports = (sequelize, DataTypes) => {
       references: {
         model: 'Restaurants',
         key: 'uuid',
-        as: 'restaurantUuid'
+        as: 'restaurantUuid',
       },
-        
+
       onUpdate: 'cascade',
-      onDelete: 'cascade'
+      onDelete: 'cascade',
     },
     createdAt: {
       allowNull: false,
-      type: DataTypes.DATE
+      type: DataTypes.DATE,
     },
     updatedAt: {
       allowNull: false,
-      type: DataTypes.DATE
+      type: DataTypes.DATE,
     },
   }, {
     sequelize,

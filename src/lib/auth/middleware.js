@@ -4,10 +4,10 @@ import constraints from '../constraints';
 const UNPROTECTED_ROUTES = [
   '/',
   '/auth/login',
-  '/auth/registration'
+  '/auth/registration',
 ];
 
-export default (req, res, next) => passport.authenticate('jwt', { session: false }, (err, payload, /* info */) => {
+export default (req, res, next) => passport.authenticate('jwt', { session: false }, (err, payload /* info */) => {
   if (UNPROTECTED_ROUTES.includes(req.path)) {
     next();
     return;

@@ -8,11 +8,10 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      Item.belongsTo(models.Subtopic, { as: 'Items', foreignKey: 'subtopicUuid' });
+      Item.belongsTo(models.Subtopic, { as: 'subtopic', foreignKey: 'subtopicUuid' });
       Item.belongsTo(models.Restaurant, { as: 'restaurantItems', foreignKey: 'restaurantUuid' });
-
     }
-  };
+  }
   Item.init({
     uuid: {
       primaryKey: true,
@@ -23,23 +22,23 @@ module.exports = (sequelize, DataTypes) => {
     },
     name: {
       allowNull: false,
-      type: DataTypes.STRING
+      type: DataTypes.STRING,
     },
     price: {
       allowNull: false,
-      type: DataTypes.FLOAT
+      type: DataTypes.FLOAT,
     },
     desc: {
       allowNull: false,
-      type: DataTypes.TEXT
+      type: DataTypes.TEXT,
     },
     img: {
       allowNull: true,
-      type: DataTypes.STRING
+      type: DataTypes.STRING,
     },
     metadata: {
       allowNull: true,
-      type: DataTypes.STRING
+      type: DataTypes.STRING,
     },
     subtopicUuid: {
       allowNull: false,
@@ -47,30 +46,30 @@ module.exports = (sequelize, DataTypes) => {
       references: {
         model: 'Subtopics',
         key: 'uuid',
-        as: 'subtopicUuid'
+        as: 'subtopicUuid',
       },
       onUpdate: 'cascade',
-      onDelete: 'cascade'
+      onDelete: 'cascade',
     },
-    
+
     restaurantUuid: {
       allowNull: false,
       type: DataTypes.UUID,
       references: {
         model: 'Restaurants',
         key: 'uuid',
-        as: 'restaurantUuid'
+        as: 'restaurantUuid',
       },
       onUpdate: 'cascade',
-      onDelete: 'cascade'
+      onDelete: 'cascade',
     },
     createdAt: {
       allowNull: false,
-      type: DataTypes.DATE
+      type: DataTypes.DATE,
     },
     updatedAt: {
       allowNull: false,
-      type: DataTypes.DATE
+      type: DataTypes.DATE,
     },
   }, {
     sequelize,

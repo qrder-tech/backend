@@ -10,11 +10,11 @@ module.exports = {
       },
       items: {
         allowNull: false,
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       isPaid: {
         defaultValue: false,
-        type: Sequelize.BOOLEAN
+        type: Sequelize.BOOLEAN,
       },
       restaurantUuid: {
         allowNull: false,
@@ -22,10 +22,10 @@ module.exports = {
         references: {
           model: 'Restaurants',
           key: 'uuid',
-          as: 'restaurantUuid'
+          as: 'restaurantUuid',
         },
         onUpdate: 'cascade',
-        onDelete: 'cascade'
+        onDelete: 'cascade',
       },
       userUuid: {
         allowNull: false,
@@ -33,10 +33,10 @@ module.exports = {
         references: {
           model: 'Users',
           key: 'uuid',
-          as: 'userUuid'
+          as: 'userUuid',
         },
         onUpdate: 'cascade',
-        onDelete: 'cascade'
+        onDelete: 'cascade',
       },
       tableUuid: {
         allowNull: false,
@@ -44,22 +44,22 @@ module.exports = {
         references: {
           model: 'Tables',
           key: 'uuid',
-          as: 'tableUuid'
+          as: 'tableUuid',
         },
         onUpdate: 'cascade',
-        onDelete: 'cascade'
+        onDelete: 'cascade',
       },
       createdAt: {
         allowNull: false,
-        type: Sequelize.DATE
+        type: Sequelize.DATE,
       },
       updatedAt: {
         allowNull: false,
-        type: Sequelize.DATE
+        type: Sequelize.DATE,
       },
     });
   },
   down: async (queryInterface /* Sequelize */) => {
     await queryInterface.dropTable('Orders');
-  }
+  },
 };

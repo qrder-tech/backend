@@ -12,7 +12,13 @@ const router = express.Router();
 
 /* GET users listing. */
 router.get('/', async (req, res /* next */) => {
-  const data = { database: null, env: config.env, mqtt: mqtt.connected, status: true, timestamp: config.timestamp };
+  const data = {
+    database: null,
+    env: config.env,
+    mqtt: mqtt.connected,
+    status: true,
+    timestamp: config.timestamp,
+  };
   try {
     await db.sequelize.authenticate();
     data.database = true;
@@ -33,7 +39,7 @@ export const initializeRoutes = (app) => {
 
 export const initializeErrorHandlers = (app) => {
   // catch 404 and forward to error handler
-  app.use((req, res /* next */) => res.status(404).send("Not found!"));
+  app.use((req, res /* next */) => res.status(404).send('Not found!'));
 
   // error handler
   app.use((err, req, res /* next */) => {

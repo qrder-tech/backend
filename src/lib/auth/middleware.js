@@ -1,5 +1,5 @@
 import passport from 'passport';
-import constraints from '../constraints';
+import constraints from '../constants';
 
 const UNPROTECTED_ROUTES = [
   '/',
@@ -19,13 +19,13 @@ export default (req, res, next) => passport.authenticate('jwt', { session: false
     return;
   }
 
-  const { user, restaurant } = payload;
+  const { consumer, restaurant } = payload;
 
   // console.log('auth-middleware:', payload);
   // user = { uuid: '3d9b7b60-741f-45aa-b94a-68daa30b7ea6' }
 
-  if (req.path.includes('/user') || req.path === '/restaurant') {
-    if (!user) {
+  if (req.path.includes('/consumer') || req.path === '/restaurant') {
+    if (!consumer) {
       const e = err || constraints.errors.UNAUTH;
       res.status(e.code).send(e);
       return;
@@ -40,7 +40,7 @@ export default (req, res, next) => passport.authenticate('jwt', { session: false
     }
   }
 
-  req.user = user;
-  req.restaurant = restaurant;
+  req.consumer = consumer && consumer.dataValues;
+  req.restaurant = restaurant && restaurant.dataValues;
   next();
 })(req, res, next);

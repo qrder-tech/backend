@@ -1,7 +1,9 @@
+'use strict';
 module.exports = {
   up: async (queryInterface, Sequelize) => {
     await queryInterface.createTable('Tables', {
       uuid: {
+        allowNull: false,
         primaryKey: true,
         type: Sequelize.UUID,
         validate: {
@@ -9,14 +11,16 @@ module.exports = {
         },
       },
       name: {
-        type: Sequelize.STRING,
         allowNull: false,
+        type: Sequelize.STRING
       },
-      services: {
-        type: Sequelize.STRING,
+      status: {
         allowNull: true,
+        type: Sequelize.STRING,
+        validate: {
+          isIn: [[null, 'occupied']]
+        }
       },
-
       restaurantUuid: {
         allowNull: false,
         type: Sequelize.UUID,
@@ -30,15 +34,15 @@ module.exports = {
       },
       createdAt: {
         allowNull: false,
-        type: Sequelize.DATE,
+        type: Sequelize.DATE
       },
       updatedAt: {
         allowNull: false,
-        type: Sequelize.DATE,
-      },
+        type: Sequelize.DATE
+      }
     });
   },
-  down: async (queryInterface /* Sequelize */) => {
+  down: async (queryInterface, Sequelize) => {
     await queryInterface.dropTable('Tables');
-  },
+  }
 };

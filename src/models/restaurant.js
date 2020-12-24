@@ -1,20 +1,21 @@
-const { Model } = require('sequelize');
-
+'use strict';
+const {
+  Model
+} = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
   class Restaurant extends Model {
-    /*
+    /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      Restaurant.hasMany(models.Order, { as: 'Orders', foreignKey: 'restaurantUuid' });
-      Restaurant.hasMany(models.Table, { as: 'Tables', foreignKey: 'restaurantUuid' });
-      Restaurant.hasMany(models.Subtopic, { as: 'Subtopics', foreignKey: 'restaurantUuid' });
-      Restaurant.hasMany(models.Item, { as: 'restaurantItems', foreignKey: 'restaurantUuid' });
+      // define association here
+      Restaurant.hasMany(models.Table, { foreignKey: 'restaurantUuid' });
+      Restaurant.hasMany(models.Item, { foreignKey: 'restaurantUuid' });
+      Restaurant.hasMany(models.Order, { foreignKey: 'restaurantUuid' });
     }
-  }
-
+  };
   Restaurant.init({
     uuid: {
       primaryKey: true,
@@ -31,38 +32,39 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
       type: DataTypes.STRING,
     },
-    phoneNumber: {
-      allowNull: false,
-      type: DataTypes.STRING,
-    },
     email: {
       allowNull: false,
       type: DataTypes.STRING,
+      unique: true,
+    },
+    phoneNumber: {
+      allowNull: false,
+      type: DataTypes.STRING,
+      unique: true,
+    },
+    serviceType: {
+      allowNull: false,
+      type: DataTypes.STRING,
+      validate: {
+        isIn: [['normal', 'self']]
+      }
+    },
+    img: {
+      allowNull: true,
+      type: DataTypes.STRING
     },
     username: {
       allowNull: false,
       type: DataTypes.STRING,
+      unique: true,
     },
     password: {
       allowNull: false,
-      type: DataTypes.STRING,
-    },
-    restaurantType: {
-      allowNull: false,
-      type: DataTypes.STRING,
-    },
-    createdAt: {
-      allowNull: false,
-      type: DataTypes.DATE,
-    },
-    updatedAt: {
-      allowNull: false,
-      type: DataTypes.DATE,
+      type: DataTypes.STRING
     },
   }, {
     sequelize,
     modelName: 'Restaurant',
   });
-
   return Restaurant;
 };

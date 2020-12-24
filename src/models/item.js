@@ -1,5 +1,7 @@
-const { Model } = require('sequelize');
-
+'use strict';
+const {
+  Model
+} = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
   class Item extends Model {
     /**
@@ -8,12 +10,14 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      Item.belongsTo(models.Subtopic, { as: 'subtopic', foreignKey: 'subtopicUuid' });
-      Item.belongsTo(models.Restaurant, { as: 'restaurantItems', foreignKey: 'restaurantUuid' });
+      // define association here
+      Item.belongsTo(models.Restaurant, { foreignKey: 'restaurantUuid' });
+      Item.belongsToMany(models.Order, { through: models.OrderItems, foreignKey: 'itemUuid' });
     }
-  }
+  };
   Item.init({
     uuid: {
+      allowNull: false,
       primaryKey: true,
       type: DataTypes.UUID,
       validate: {
@@ -22,36 +26,33 @@ module.exports = (sequelize, DataTypes) => {
     },
     name: {
       allowNull: false,
-      type: DataTypes.STRING,
+      type: DataTypes.STRING
+    },
+    desc: {
+      allowNull: true,
+      type: DataTypes.STRING
+    },
+    type: {
+      allowNull: false,
+      type: DataTypes.STRING
+    },
+    options: {
+      allowNull: true,
+      type: DataTypes.STRING
     },
     price: {
       allowNull: false,
-      type: DataTypes.FLOAT,
-    },
-    desc: {
-      allowNull: false,
-      type: DataTypes.TEXT,
+      type: DataTypes.FLOAT
     },
     img: {
       allowNull: true,
-      type: DataTypes.STRING,
+      type: DataTypes.STRING
     },
-    metadata: {
-      allowNull: true,
-      type: DataTypes.STRING,
-    },
-    subtopicUuid: {
+    enabled: {
       allowNull: false,
-      type: DataTypes.UUID,
-      references: {
-        model: 'Subtopics',
-        key: 'uuid',
-        as: 'subtopicUuid',
-      },
-      onUpdate: 'cascade',
-      onDelete: 'cascade',
+      defaultValue: true,
+      type: DataTypes.BOOLEAN
     },
-
     restaurantUuid: {
       allowNull: false,
       type: DataTypes.UUID,
@@ -62,14 +63,6 @@ module.exports = (sequelize, DataTypes) => {
       },
       onUpdate: 'cascade',
       onDelete: 'cascade',
-    },
-    createdAt: {
-      allowNull: false,
-      type: DataTypes.DATE,
-    },
-    updatedAt: {
-      allowNull: false,
-      type: DataTypes.DATE,
     },
   }, {
     sequelize,

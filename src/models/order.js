@@ -1,5 +1,7 @@
-const { Model } = require('sequelize');
-
+'use strict';
+const {
+  Model
+} = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
   class Order extends Model {
     /**
@@ -8,26 +10,33 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      Order.belongsTo(models.Restaurant, { as: 'Orders', foreignKey: 'restaurantUuid' });
-      Order.belongsTo(models.User, { as: 'UserOrders', foreignKey: 'userUuid' });
-      Order.belongsTo(models.Table, { as: 'RecentOrders', foreignKey: 'tableUuid' });
+      // define association here
+      Order.belongsTo(models.Consumer, { foreignKey: 'consumerUuid' });
+      Order.belongsTo(models.Restaurant, { foreignKey: 'restaurantUuid' });
+      Order.belongsTo(models.Table, { foreignKey: 'tableUuid' });
+      Order.belongsToMany(models.Item, { through: models.OrderItems, foreignKey: 'orderUuid' });
     }
-  }
+  };
   Order.init({
     uuid: {
+      allowNull: false,
       primaryKey: true,
       type: DataTypes.UUID,
       validate: {
         isUUID: 4,
       },
     },
-    items: {
+    no: {
       allowNull: false,
-      type: DataTypes.STRING,
+      type: DataTypes.INTEGER,
     },
-    isPaid: {
-      defaultValue: false,
-      type: DataTypes.BOOLEAN,
+    status: {
+      allowNull: false,
+      defaultValue: 'waiting',
+      type: DataTypes.STRING,
+      validate: {
+        isIn: [['waiting', 'served', 'paid']]
+      }
     },
     restaurantUuid: {
       allowNull: false,
@@ -40,19 +49,8 @@ module.exports = (sequelize, DataTypes) => {
       onUpdate: 'cascade',
       onDelete: 'cascade',
     },
-    userUuid: {
-      allowNull: false,
-      type: DataTypes.UUID,
-      references: {
-        model: 'Users',
-        key: 'uuid',
-        as: 'userUuid',
-      },
-      onUpdate: 'cascade',
-      onDelete: 'cascade',
-    },
     tableUuid: {
-      allowNull: false,
+      allowNull: true,
       type: DataTypes.UUID,
       references: {
         model: 'Tables',
@@ -62,13 +60,16 @@ module.exports = (sequelize, DataTypes) => {
       onUpdate: 'cascade',
       onDelete: 'cascade',
     },
-    createdAt: {
-      allowNull: false,
-      type: DataTypes.DATE,
-    },
-    updatedAt: {
-      allowNull: false,
-      type: DataTypes.DATE,
+    consumerUuid: {
+      allowNull: true,
+      type: DataTypes.UUID,
+      references: {
+        model: 'Consumers',
+        key: 'uuid',
+        as: 'consumerUuid',
+      },
+      onUpdate: 'cascade',
+      onDelete: 'cascade',
     },
   }, {
     sequelize,

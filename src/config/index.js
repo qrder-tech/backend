@@ -1,6 +1,6 @@
 import dotenv from 'dotenv';
-import databaseConfig from '../config/database.config';
-import mqttConfig from '../config/mqtt.config';
+import databaseConfig from './database.config';
+import mqttConfig from './mqtt.config';
 // import mailConfig from '../config/mail.config.json';
 
 dotenv.config();

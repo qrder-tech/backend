@@ -6,7 +6,7 @@ import { db, mqtt } from '../lib/clients';
 import authRouter from './auth';
 import orderRouter from './order';
 import restaurantRouter from './restaurant';
-import userRouter from './user';
+import consumerRouter from './consumer';
 
 const router = express.Router();
 
@@ -32,9 +32,9 @@ router.get('/', async (req, res /* next */) => {
 export const initializeRoutes = (app) => {
   app.use('/', router);
   app.use('/auth', authRouter);
+  app.use('/consumer', consumerRouter);
   app.use('/order', orderRouter);
   app.use('/restaurant', restaurantRouter);
-  app.use('/user', userRouter);
 };
 
 export const initializeErrorHandlers = (app) => {

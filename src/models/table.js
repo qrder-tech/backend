@@ -1,7 +1,7 @@
+'use strict';
 const {
-  Model,
+  Model
 } = require('sequelize');
-
 module.exports = (sequelize, DataTypes) => {
   class Table extends Model {
     /**
@@ -10,13 +10,14 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      Table.belongsTo(models.Restaurant, { as: 'Tables', foreignKey: 'restaurantUuid' });
-      Table.hasMany(models.Order, { as: 'RecentOrders', foreignKey: 'tableUuid' });
-      Table.hasMany(models.Service, { as: 'Services', foreignKey: 'tableUuid' });
+      // define association here
+      Table.belongsTo(models.Restaurant, { foreignKey: 'restaurantUuid' });
+      Table.hasMany(models.Order, { foreignKey: 'tableUuid' });
     }
-  }
+  };
   Table.init({
     uuid: {
+      allowNull: false,
       primaryKey: true,
       type: DataTypes.UUID,
       validate: {
@@ -25,7 +26,14 @@ module.exports = (sequelize, DataTypes) => {
     },
     name: {
       allowNull: false,
+      type: DataTypes.STRING
+    },
+    status: {
+      allowNull: true,
       type: DataTypes.STRING,
+      validate: {
+        isIn: [[null, 'occupied']]
+      }
     },
     restaurantUuid: {
       allowNull: false,
@@ -35,18 +43,8 @@ module.exports = (sequelize, DataTypes) => {
         key: 'uuid',
         as: 'restaurantUuid',
       },
-
       onUpdate: 'cascade',
       onDelete: 'cascade',
-    },
-
-    createdAt: {
-      allowNull: false,
-      type: DataTypes.DATE,
-    },
-    updatedAt: {
-      allowNull: false,
-      type: DataTypes.DATE,
     },
   }, {
     sequelize,

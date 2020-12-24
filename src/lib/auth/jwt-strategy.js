@@ -1,6 +1,6 @@
 import { Strategy as JwtStrategy, ExtractJwt } from 'passport-jwt';
 import { db } from '../clients';
-import constraints from '../constraints';
+import constraints from '../constants';
 import config from '../../config';
 
 const params = {
@@ -9,7 +9,7 @@ const params = {
 };
 
 const strategy = new JwtStrategy(params, async (payload, done) => {
-  const user = await db.User.findByPk(payload.uuid, {
+  const consumer = await db.Consumer.findByPk(payload.uuid, {
     attributes: ['uuid'],
   });
 
@@ -17,13 +17,13 @@ const strategy = new JwtStrategy(params, async (payload, done) => {
     attributes: ['uuid'],
   });
 
-  if (!user && !restaurant) {
+  if (!consumer && !restaurant) {
     return done(constraints.errors.UNAUTH, false);
   }
 
   return done(null, {
-    user: user && user.dataValues,
-    restaurant: restaurant && restaurant.dataValues,
+    consumer: consumer,
+    restaurant: restaurant,
   });
 });
 

@@ -1,20 +1,26 @@
+'use strict';
 module.exports = {
   up: async (queryInterface, Sequelize) => {
     await queryInterface.createTable('Orders', {
       uuid: {
+        allowNull: false,
         primaryKey: true,
         type: Sequelize.UUID,
         validate: {
           isUUID: 4,
         },
       },
-      items: {
+      no: {
         allowNull: false,
-        type: Sequelize.STRING,
+        type: Sequelize.INTEGER,
       },
-      isPaid: {
-        defaultValue: false,
-        type: Sequelize.BOOLEAN,
+      status: {
+        allowNull: false,
+        defaultValue: 'waiting',
+        type: Sequelize.STRING,
+        validate: {
+          isIn: [['waiting', 'served', 'paid']]
+        }
       },
       restaurantUuid: {
         allowNull: false,
@@ -27,19 +33,8 @@ module.exports = {
         onUpdate: 'cascade',
         onDelete: 'cascade',
       },
-      userUuid: {
-        allowNull: false,
-        type: Sequelize.UUID,
-        references: {
-          model: 'Users',
-          key: 'uuid',
-          as: 'userUuid',
-        },
-        onUpdate: 'cascade',
-        onDelete: 'cascade',
-      },
       tableUuid: {
-        allowNull: false,
+        allowNull: true,
         type: Sequelize.UUID,
         references: {
           model: 'Tables',
@@ -49,17 +44,28 @@ module.exports = {
         onUpdate: 'cascade',
         onDelete: 'cascade',
       },
+      consumerUuid: {
+        allowNull: true,
+        type: Sequelize.UUID,
+        references: {
+          model: 'Consumers',
+          key: 'uuid',
+          as: 'consumerUuid',
+        },
+        onUpdate: 'cascade',
+        onDelete: 'cascade',
+      },
       createdAt: {
         allowNull: false,
-        type: Sequelize.DATE,
+        type: Sequelize.DATE
       },
       updatedAt: {
         allowNull: false,
-        type: Sequelize.DATE,
-      },
+        type: Sequelize.DATE
+      }
     });
   },
-  down: async (queryInterface /* Sequelize */) => {
+  down: async (queryInterface, Sequelize) => {
     await queryInterface.dropTable('Orders');
-  },
+  }
 };

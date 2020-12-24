@@ -33,5 +33,3 @@ export const parseMqttMessage = (topic, message) => {
     message: JSON.parse(message),
   };
 };
-
-export const convertType = (text) => text.charAt(0).toUpperCase() + text.slice(1).toLowerCase();

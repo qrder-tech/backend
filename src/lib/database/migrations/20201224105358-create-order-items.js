@@ -1,4 +1,3 @@
-'use strict';
 module.exports = {
   up: async (queryInterface, Sequelize) => {
     await queryInterface.createTable('OrderItems', {
@@ -29,15 +28,15 @@ module.exports = {
       options: {
         allowNull: false,
         primaryKey: 'true',
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       quantity: {
         allowNull: false,
         type: Sequelize.INTEGER,
-      }
+      },
     });
   },
-  down: async (queryInterface, Sequelize) => {
+  down: async (queryInterface) => {
     await queryInterface.dropTable('OrderItems');
-  }
+  },
 };

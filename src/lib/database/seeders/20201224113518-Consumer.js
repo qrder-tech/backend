@@ -1,10 +1,9 @@
-'use strict';
 const md5 = require('md5');
 const moment = require('moment');
-const { v4: uuid } = require('uuid');
+// const { v4: uuid } = require('uuid');
 
 module.exports = {
-  up: async (queryInterface, Sequelize) => {
+  up: async (queryInterface) => {
     await queryInterface.bulkInsert('Consumers', [{
       uuid: '3d9b7b60-741f-45aa-b94a-68daa30b7ea6',
       name: 'John',
@@ -44,7 +43,7 @@ module.exports = {
     }], {});
   },
 
-  down: async (queryInterface, Sequelize) => {
+  down: async (queryInterface) => {
     await queryInterface.bulkDelete('Consumers', null, {});
-  }
+  },
 };

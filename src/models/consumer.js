@@ -1,7 +1,7 @@
-'use strict';
 const {
-  Model
+  Model,
 } = require('sequelize');
+
 module.exports = (sequelize, DataTypes) => {
   class Consumer extends Model {
     /**
@@ -13,7 +13,7 @@ module.exports = (sequelize, DataTypes) => {
       // define association here
       Consumer.hasMany(models.Order, { foreignKey: 'consumerUuid' });
     }
-  };
+  }
   Consumer.init({
     uuid: {
       primaryKey: true,
@@ -47,7 +47,7 @@ module.exports = (sequelize, DataTypes) => {
     },
     img: {
       allowNull: true,
-      type: DataTypes.STRING
+      type: DataTypes.STRING,
     },
     username: {
       allowNull: false,
@@ -56,7 +56,7 @@ module.exports = (sequelize, DataTypes) => {
     },
     password: {
       allowNull: false,
-      type: DataTypes.STRING
+      type: DataTypes.STRING,
     },
   }, {
     sequelize,

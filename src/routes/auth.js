@@ -4,7 +4,6 @@ import { AuthService } from '../services';
 
 const router = express.Router();
 
-
 /* GET users listing. */
 router.get('/', (req, res /* next */) => {
   res.send({ status: 1 });

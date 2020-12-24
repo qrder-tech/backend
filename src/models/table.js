@@ -1,7 +1,7 @@
-'use strict';
 const {
-  Model
+  Model,
 } = require('sequelize');
+
 module.exports = (sequelize, DataTypes) => {
   class Table extends Model {
     /**
@@ -14,7 +14,7 @@ module.exports = (sequelize, DataTypes) => {
       Table.belongsTo(models.Restaurant, { foreignKey: 'restaurantUuid' });
       Table.hasMany(models.Order, { foreignKey: 'tableUuid' });
     }
-  };
+  }
   Table.init({
     uuid: {
       allowNull: false,
@@ -26,14 +26,14 @@ module.exports = (sequelize, DataTypes) => {
     },
     name: {
       allowNull: false,
-      type: DataTypes.STRING
+      type: DataTypes.STRING,
     },
     status: {
       allowNull: true,
       type: DataTypes.STRING,
       validate: {
-        isIn: [[null, 'occupied']]
-      }
+        isIn: [[null, 'occupied']],
+      },
     },
     restaurantUuid: {
       allowNull: false,

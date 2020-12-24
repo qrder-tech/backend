@@ -1,9 +1,8 @@
-'use strict';
 const moment = require('moment');
-const { v4: uuid } = require('uuid');
+// const { v4: uuid } = require('uuid');
 
 module.exports = {
-  up: async (queryInterface, Sequelize) => {
+  up: async (queryInterface) => {
     await queryInterface.bulkInsert('Items', [{
       uuid: 'c49532af-3256-442f-9f0d-aa4300e7c400',
       name: 'Adana Kebab',
@@ -55,7 +54,7 @@ module.exports = {
     }], {});
   },
 
-  down: async (queryInterface, Sequelize) => {
+  down: async (queryInterface) => {
     await queryInterface.bulkDelete('Items', null, {});
-  }
+  },
 };

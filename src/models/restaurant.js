@@ -1,7 +1,7 @@
-'use strict';
 const {
-  Model
+  Model,
 } = require('sequelize');
+
 module.exports = (sequelize, DataTypes) => {
   class Restaurant extends Model {
     /**
@@ -15,7 +15,7 @@ module.exports = (sequelize, DataTypes) => {
       Restaurant.hasMany(models.Item, { foreignKey: 'restaurantUuid' });
       Restaurant.hasMany(models.Order, { foreignKey: 'restaurantUuid' });
     }
-  };
+  }
   Restaurant.init({
     uuid: {
       primaryKey: true,
@@ -46,12 +46,12 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
       type: DataTypes.STRING,
       validate: {
-        isIn: [['normal', 'self']]
-      }
+        isIn: [['normal', 'self']],
+      },
     },
     img: {
       allowNull: true,
-      type: DataTypes.STRING
+      type: DataTypes.STRING,
     },
     username: {
       allowNull: false,
@@ -60,7 +60,7 @@ module.exports = (sequelize, DataTypes) => {
     },
     password: {
       allowNull: false,
-      type: DataTypes.STRING
+      type: DataTypes.STRING,
     },
   }, {
     sequelize,

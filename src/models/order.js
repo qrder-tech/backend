@@ -1,7 +1,7 @@
-'use strict';
 const {
-  Model
+  Model,
 } = require('sequelize');
+
 module.exports = (sequelize, DataTypes) => {
   class Order extends Model {
     /**
@@ -16,7 +16,7 @@ module.exports = (sequelize, DataTypes) => {
       Order.belongsTo(models.Table, { foreignKey: 'tableUuid' });
       Order.belongsToMany(models.Item, { through: models.OrderItems, foreignKey: 'orderUuid' });
     }
-  };
+  }
   Order.init({
     uuid: {
       allowNull: false,
@@ -35,8 +35,8 @@ module.exports = (sequelize, DataTypes) => {
       defaultValue: 'waiting',
       type: DataTypes.STRING,
       validate: {
-        isIn: [['waiting', 'served', 'paid']]
-      }
+        isIn: [['waiting', 'served', 'paid']],
+      },
     },
     restaurantUuid: {
       allowNull: false,

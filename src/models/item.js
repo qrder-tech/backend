@@ -1,7 +1,7 @@
-'use strict';
 const {
-  Model
+  Model,
 } = require('sequelize');
+
 module.exports = (sequelize, DataTypes) => {
   class Item extends Model {
     /**
@@ -14,7 +14,7 @@ module.exports = (sequelize, DataTypes) => {
       Item.belongsTo(models.Restaurant, { foreignKey: 'restaurantUuid' });
       Item.belongsToMany(models.Order, { through: models.OrderItems, foreignKey: 'itemUuid' });
     }
-  };
+  }
   Item.init({
     uuid: {
       allowNull: false,
@@ -26,32 +26,32 @@ module.exports = (sequelize, DataTypes) => {
     },
     name: {
       allowNull: false,
-      type: DataTypes.STRING
+      type: DataTypes.STRING,
     },
     desc: {
       allowNull: true,
-      type: DataTypes.STRING
+      type: DataTypes.STRING,
     },
     type: {
       allowNull: false,
-      type: DataTypes.STRING
+      type: DataTypes.STRING,
     },
     options: {
       allowNull: true,
-      type: DataTypes.STRING
+      type: DataTypes.STRING,
     },
     price: {
       allowNull: false,
-      type: DataTypes.FLOAT
+      type: DataTypes.FLOAT,
     },
     img: {
       allowNull: true,
-      type: DataTypes.STRING
+      type: DataTypes.STRING,
     },
     enabled: {
       allowNull: false,
       defaultValue: true,
-      type: DataTypes.BOOLEAN
+      type: DataTypes.BOOLEAN,
     },
     restaurantUuid: {
       allowNull: false,

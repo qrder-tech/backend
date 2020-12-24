@@ -7,5 +7,5 @@ export {
   AuthService,
   ConsumerService,
   OrderService,
-  RestaurantService
+  RestaurantService,
 };

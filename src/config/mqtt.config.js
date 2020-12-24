@@ -1,4 +1,5 @@
-const dotenv = require("dotenv");
+const dotenv = require('dotenv');
+
 dotenv.config();
 
 module.exports = {
@@ -6,5 +7,5 @@ module.exports = {
   PORT: process.env.CLOUDAMQP_MQTT_PORT,
   PORT_TLS: process.env.CLOUDAMQP_MQTT_PORT_TLS,
   USERNAME: process.env.CLOUDAMQP_MQTT_USERNAME,
-  PASSWORD: process.env.CLOUDAMQP_MQTT_PASSWORD
-}
+  PASSWORD: process.env.CLOUDAMQP_MQTT_PASSWORD,
+};

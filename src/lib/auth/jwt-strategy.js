@@ -22,8 +22,8 @@ const strategy = new JwtStrategy(params, async (payload, done) => {
   }
 
   return done(null, {
-    consumer: consumer,
-    restaurant: restaurant,
+    consumer,
+    restaurant,
   });
 });
 

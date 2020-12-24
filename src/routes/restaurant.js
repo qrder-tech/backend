@@ -72,10 +72,9 @@ router.post('/tables', async (req, res /* next */) => {
     if (uuid) {
       const result = await RestaurantService.UpdateRestaurantTable(uuid, restaurant.uuid, payload);
       return res.send(result);
-    } else {
-      const result = await RestaurantService.CreateRestaurantTable(restaurant.uuid, payload);
-      return res.send(result);
     }
+    const result = await RestaurantService.CreateRestaurantTable(restaurant.uuid, payload);
+    return res.send(result);
   } catch (err) {
     return res.status(err.code || 500).send(err);
   }
@@ -102,10 +101,9 @@ router.post('/item', async (req, res /* next */) => {
     if (uuid) {
       const result = await RestaurantService.UpdateRestaurantItem(uuid, restaurant.uuid, payload);
       return res.send(result);
-    } else {
-      const result = await RestaurantService.CreateRestaurantItem(restaurant.uuid, payload);
-      return res.send(result);
     }
+    const result = await RestaurantService.CreateRestaurantItem(restaurant.uuid, payload);
+    return res.send(result);
   } catch (err) {
     return res.status(err.code || 500).send(err);
   }

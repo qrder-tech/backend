@@ -1,7 +1,7 @@
-'use strict';
 const {
-  Model
+  Model,
 } = require('sequelize');
+
 module.exports = (sequelize, DataTypes) => {
   class OrderItems extends Model {
     /**
@@ -14,7 +14,7 @@ module.exports = (sequelize, DataTypes) => {
       OrderItems.belongsTo(models.Order, { foreignKey: 'orderUuid' });
       OrderItems.belongsTo(models.Item, { foreignKey: 'itemUuid' });
     }
-  };
+  }
   OrderItems.init({
     orderUuid: {
       allowNull: false,
@@ -43,7 +43,7 @@ module.exports = (sequelize, DataTypes) => {
     options: {
       allowNull: false,
       primaryKey: 'true',
-      type: DataTypes.STRING
+      type: DataTypes.STRING,
     },
     quantity: {
       allowNull: false,
@@ -52,7 +52,7 @@ module.exports = (sequelize, DataTypes) => {
   }, {
     sequelize,
     modelName: 'OrderItems',
-    timestamps: false
+    timestamps: false,
   });
   return OrderItems;
 };

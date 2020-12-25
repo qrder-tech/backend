@@ -22,7 +22,7 @@ module.exports = {
       },
       services: {
         allowNull: true,
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       restaurantUuid: {
         allowNull: false,

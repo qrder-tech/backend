@@ -98,5 +98,5 @@ const UpdateConsumerBalance = (uuid, { amount }) => new Promise(async (resolve, 
 export default {
   GetConsumerInfo,
   UpdateConsumerInfo,
-  UpdateConsumerBalance
+  UpdateConsumerBalance,
 };

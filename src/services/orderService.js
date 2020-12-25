@@ -2,7 +2,7 @@
 import { Op } from 'sequelize';
 // import { v4 as _uuid } from 'uuid';
 
-import ConsumerService from './consumerService';
+// import ConsumerService from './consumerService';
 
 import { db } from '../lib/clients';
 import constants from '../lib/constants';
@@ -24,13 +24,13 @@ const GetOrderInfo = (uuid, restaurantUuid, consumerUuid) => new Promise(async (
           consumerUuid && { consumerUuid: consumerUuid || null },
         ],
       },
-    }).then(entity => {
+    }).then((entity) => {
       if (!entity) {
         return entity;
       }
 
       entity.dataValues.totalPrice = 0;
-      entity.Items.map(item => {
+      entity.Items.map((item) => {
         entity.dataValues.totalPrice += item.price * item.OrderItems.quantity;
         return item;
       });
@@ -65,14 +65,14 @@ const GetAllOrders = (restaurantUuid, consumerUuid /* , { scope, start, length }
           consumerUuid && { consumerUuid: consumerUuid || null },
         ],
       },
-    }).then(entities => {
+    }).then((entities) => {
       if (!entities) {
         return entities;
       }
 
-      entities.map(entity => {
+      entities.map((entity) => {
         entity.dataValues.totalPrice = 0;
-        entity.Items.map(item => {
+        entity.Items.map((item) => {
           entity.dataValues.totalPrice += item.price * item.OrderItems.quantity;
           return item;
         });
@@ -146,8 +146,8 @@ const PayOrder = (uuid, restaurantUuid, consumerUuid) => new Promise(async (reso
           consumerUuid && { consumerUuid: consumerUuid || null },
         ],
         status: {
-          [Op.ne]: 'paid'
-        }
+          [Op.ne]: 'paid',
+        },
       },
     });
 

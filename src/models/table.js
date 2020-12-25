@@ -35,6 +35,10 @@ module.exports = (sequelize, DataTypes) => {
         isIn: [[null, 'occupied']],
       },
     },
+    services: {
+      allowNull: true,
+      type: DataTypes.STRING,
+    },
     restaurantUuid: {
       allowNull: false,
       type: DataTypes.UUID,

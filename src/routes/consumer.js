@@ -32,4 +32,16 @@ router.post('/me', async (req, res /* next */) => {
   }
 });
 
+router.post('/wallet', async (req, res /* next */) => {
+  const { consumer } = req;
+  const payload = req.body;
+
+  try {
+    const result = await ConsumerService.UpdateConsumerBalance(consumer.uuid, payload);
+    return res.send(result);
+  } catch (err) {
+    return res.status(err.code || 500).send(err);
+  }
+});
+
 module.exports = router;

@@ -20,6 +20,10 @@ module.exports = {
           isIn: [[null, 'occupied']],
         },
       },
+      services: {
+        allowNull: true,
+        type: Sequelize.STRING
+      },
       restaurantUuid: {
         allowNull: false,
         type: Sequelize.UUID,

@@ -1,5 +1,5 @@
 import validator from 'validator';
-import { Op } from 'sequelize';
+import { Op, fn, col } from 'sequelize';
 import { v4 as _uuid } from 'uuid';
 
 import { db } from '../lib/clients';
@@ -123,6 +123,56 @@ const GetRestaurantTables = (restaurantUuid) => new Promise(async (resolve, reje
       where: {
         restaurantUuid,
       },
+    }).then(entities => {
+      if (!entities) {
+        return entities;
+      }
+
+      entities.map(entity => {
+        // convert services
+        if (entity.services) {
+          entity.services = JSON.parse(entity.services);
+
+          // calculate most delated date
+          entity.services && entity.services.map(service => {
+            if (entity.dataValues.mostDelayedDate) {
+              const tempDate = new Date(service.createdAt);
+              if (tempDate - entity.dataValues.mostDelayedDate < 0) {
+                entity.dataValues.mostDelayedDate = tempDate;
+              }
+            } else {
+              entity.dataValues.mostDelayedDate = new Date(service.createdAt);
+            }
+          });
+        }
+
+        entity.Orders && entity.Orders.map(order => {
+          // calculate most delated date
+          if (order.status !== 'served') {
+            if (entity.dataValues.mostDelayedDate) {
+              const tempDate = new Date(order.createdAt);
+              if (tempDate - entity.dataValues.mostDelayedDate < 0) {
+                entity.dataValues.mostDelayedDate = tempDate;
+              }
+            } else {
+              entity.dataValues.mostDelayedDate = new Date(order.createdAt);
+            }
+          }
+
+          // calculate total price
+          order.dataValues.totalPrice = 0;
+          order.Items.map(item => {
+            order.dataValues.totalPrice += item.price * item.OrderItems.quantity;
+            return item;
+          });
+
+          return order;
+        });
+
+        return entity;
+      });
+
+      return entities;
     });
 
     return resolve(tables);
@@ -245,7 +295,7 @@ const UpdateRestaurantItem = (uuid, restaurantUuid, {
       name,
       desc,
       type,
-      options: (options && options.join(';')) || null,
+      options: (options && options.join(';')) || undefined,
       price,
       img,
       enabled,

@@ -75,7 +75,28 @@ const UpdateConsumerInfo = (uuid, {
   }
 });
 
+const UpdateConsumerBalance = (uuid, { amount }) => new Promise(async (resolve, reject) => {
+  if (!amount) {
+    return reject(constants.errors.MISSING_ARGS);
+  }
+
+  try {
+    const consumer = await db.Consumer.increment('balance', {
+      by: amount,
+      where: {
+        uuid,
+      },
+    });
+    return resolve(consumer);
+  } catch (err) {
+    const e = constants.errors.UNKNOWN;
+    e.extra = err;
+    return reject(e);
+  }
+});
+
 export default {
   GetConsumerInfo,
   UpdateConsumerInfo,
+  UpdateConsumerBalance
 };

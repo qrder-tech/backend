@@ -74,6 +74,10 @@ const UpdateRestaurantInfo = (uuid, {
 const GetRestaurantMenu = (restaurantUuid) => new Promise(async (resolve, reject) => {
   try {
     const items = await db.Item.findAll({
+      order: [
+        ['type', 'ASC'],
+        ['name', 'ASC'],
+      ],
       where: {
         restaurantUuid,
       },
@@ -117,6 +121,9 @@ const GetRestaurantTables = (restaurantUuid) => new Promise(async (resolve, reje
         },
         required: false,
       },
+      order: [
+        ['name', 'ASC'],
+      ],
       where: {
         restaurantUuid,
       },

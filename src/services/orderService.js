@@ -53,10 +53,17 @@ const GetOrderInfo = (uuid, restaurantUuid, consumerUuid) => new Promise(async (
   }
 });
 
-const GetAllOrders = (restaurantUuid, consumerUuid /* , { scope, start, length } */) => new Promise(async (resolve, reject) => {
+const GetAllOrders = (restaurantUuid, consumerUuid, { scope = 'all' /* start, length */ }) => new Promise(async (resolve, reject) => {
   try {
+    const scopeArr = [
+      ((scope === 'all' || scope === 'waiting') && 'waiting') || null,
+      ((scope === 'all' || scope === 'served') && 'served') || null,
+      ((scope === 'all' || scope === 'paid') && 'paid') || null,
+    ];
+
     const order = await db.Order.findAll({
       order: [
+        ['status', 'DESC'],
         ['createdAt', 'DESC'],
       ],
       where: {
@@ -64,6 +71,7 @@ const GetAllOrders = (restaurantUuid, consumerUuid /* , { scope, start, length }
           restaurantUuid && { restaurantUuid: restaurantUuid || null },
           consumerUuid && { consumerUuid: consumerUuid || null },
         ],
+        status: scopeArr,
       },
     }).then(async (entities) => {
       if (!entities) {
@@ -178,8 +186,6 @@ const CreateOrder = (_restaurantUuid, consumerUuid, { restaurantUuid, tableUuid,
             options: (item.options && item.options.join(';')) || '',
             quantity: item.quantity,
           }));
-
-        console.log(orderItems);
 
         if (!orderItems || orderItems.length === 0) {
           throw constants.errors.INVALID_ARGS;

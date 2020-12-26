@@ -20,7 +20,7 @@ module.exports = {
       createdAt: moment().format('YYYY-MM-DD HH:mm:ss'),
       updatedAt: moment().format('YYYY-MM-DD HH:mm:ss'),
     }, {
-      uuid: uuid(),
+      uuid: '005dd3a6-a892-4473-94eb-87fdfc167e5d',
       name: 'B1',
       status: null,
       services: null,

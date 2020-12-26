@@ -115,9 +115,6 @@ const GetRestaurantTables = (restaurantUuid) => new Promise(async (resolve, reje
             [Op.ne]: 'paid',
           },
         },
-        include: {
-          model: db.Item,
-        },
         required: false,
       },
       where: {
@@ -151,7 +148,7 @@ const GetRestaurantTables = (restaurantUuid) => new Promise(async (resolve, reje
         }
 
         if (entity.Orders) {
-          entity.Orders.map((order) => {
+          entity.Orders.map(async (order) => {
             // calculate most delated date
             if (order.status !== 'served') {
               if (entity.dataValues.mostDelayedDate) {
@@ -163,13 +160,6 @@ const GetRestaurantTables = (restaurantUuid) => new Promise(async (resolve, reje
                 entity.dataValues.mostDelayedDate = new Date(order.createdAt);
               }
             }
-
-            // calculate total price
-            order.dataValues.totalPrice = 0;
-            order.Items.map((item) => {
-              order.dataValues.totalPrice += item.price * item.OrderItems.quantity;
-              return item;
-            });
 
             return order;
           });

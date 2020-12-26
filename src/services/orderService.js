@@ -14,9 +14,6 @@ const GetOrderInfo = (uuid, restaurantUuid, consumerUuid) => new Promise(async (
     }
 
     const order = await db.Order.findOne({
-      include: {
-        model: db.Item,
-      },
       where: {
         uuid,
         [Op.or]: [
@@ -24,21 +21,27 @@ const GetOrderInfo = (uuid, restaurantUuid, consumerUuid) => new Promise(async (
           consumerUuid && { consumerUuid: consumerUuid || null },
         ],
       },
-    }).then((entity) => {
+    }).then(async (entity) => {
       if (!entity) {
         return entity;
       }
 
+      const items = await entity.getItems();
+      entity.Items = items;
+      entity.dataValues.Items = items;
+
       entity.totalPrice = 0;
       entity.dataValues.totalPrice = 0;
-      entity.Items.map((item) => {
+      await Promise.all(items.map((item) => {
         entity.totalPrice += item.price * item.OrderItems.quantity;
         entity.dataValues.totalPrice += item.price * item.OrderItems.quantity;
         return item;
-      });
+      }));
 
       return entity;
     });
+
+
 
     if (!order) {
       return reject(constants.errors.ENTITY_NOT_EXIST);
@@ -55,9 +58,6 @@ const GetOrderInfo = (uuid, restaurantUuid, consumerUuid) => new Promise(async (
 const GetAllOrders = (restaurantUuid, consumerUuid /* , { scope, start, length } */) => new Promise(async (resolve, reject) => {
   try {
     const order = await db.Order.findAll({
-      include: {
-        model: db.Item,
-      },
       order: [
         ['createdAt', 'DESC'],
       ],
@@ -67,23 +67,26 @@ const GetAllOrders = (restaurantUuid, consumerUuid /* , { scope, start, length }
           consumerUuid && { consumerUuid: consumerUuid || null },
         ],
       },
-    }).then((entities) => {
+    }).then(async (entities) => {
       if (!entities) {
         return entities;
       }
 
-      entities.map((entity) => {
+      await Promise.all(entities.map(async (entity) => {
+        const items = await entity.getItems();
+        // entity.Items = items;
+        // entity.dataValues.Items = items;
+
         entity.totalPrice = 0;
         entity.dataValues.totalPrice = 0;
-        entity.Items.map((item) => {
+        await Promise.all(items.map((item) => {
           entity.totalPrice += item.price * item.OrderItems.quantity;
           entity.dataValues.totalPrice += item.price * item.OrderItems.quantity;
           return item;
-        });
+        }));
 
-        delete entity.dataValues.Items;
         return entity;
-      });
+      }));
 
       return entities;
     });
@@ -169,31 +172,22 @@ const CreateOrder = (_restaurantUuid, consumerUuid, { restaurantUuid, tableUuid,
         }
 
         // add each item to the order thorugh orderItems
-        let validItemCount = 0;
-        await Promise.all(items.map(async (item) => {
-          if (!item || !item.uuid || !item.quantity) {
-            // console.log('Invalid item: ', item);
-          } else {
-            // console.log('item:', item);
-            try {
-              await db.OrderItems.create({
-                orderUuid: tempOrder.uuid,
-                itemUuid: item.uuid,
-                options: item.options || '',
-                quantity: item.quantity,
-              }, { transaction });
-              validItemCount += 1;
-            } catch (err) {
-              // console.log(err);
+        const orderItems = items.map(item => {
+          if (item && item.uuid && item.quantity) {
+            return {
+              orderUuid: tempOrder.uuid,
+              itemUuid: item.uuid,
+              options: (item.options && item.options.join(";")) || "",
+              quantity: item.quantity,
             }
           }
+        });
 
-          return item;
-        }));
-
-        if (!validItemCount) {
+        if (!orderItems || orderItems.length === 0) {
           throw constants.errors.INVALID_ARGS;
         }
+
+        await db.OrderItems.bulkCreate(orderItems, { transaction });
 
         if (tableUuid) {
           const table = await db.Table.findOne({

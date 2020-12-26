@@ -7,6 +7,15 @@ export default {
     NORMAL: 'normal',
     SELF: 'self',
   },
+  ORDER_STATUS: [
+    'waiting',
+    'served',
+    'paid',
+  ],
+  TABLE_STATUS: [
+    null,
+    'occupied',
+  ],
   errors: {
     UNAUTH: { code: 401, msg: 'Unauthorized action' },
     INVALID_TOKEN: { code: 401, msg: 'Invalid token' },

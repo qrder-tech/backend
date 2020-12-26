@@ -213,7 +213,7 @@ const CreateOrder = (_restaurantUuid, consumerUuid, { restaurantUuid, tableUuid,
         return tempOrder;
       });
 
-      const orderInfo = GetOrderInfo(order.dataValues.uuid, restaurantUuid, consumerUuid);
+      const orderInfo = await GetOrderInfo(order.dataValues.uuid, restaurantUuid, consumerUuid);
       return resolve(orderInfo);
     } catch (err) {
       return reject(err);
@@ -225,9 +225,131 @@ const CreateOrder = (_restaurantUuid, consumerUuid, { restaurantUuid, tableUuid,
   }
 });
 
-const UpdateOrder = (/* uuid, restaurantUuid, consumerUuid, { tableUuid, items } */) => {
+const UpdateOrder = (uuid, restaurantUuid, consumerUuid, {
+  no, status, tableUuid, items,
+}) => new Promise(async (resolve, reject) => {
+  try {
+    if (!uuid) {
+      return reject(constants.errors.MISSING_ARGS);
+    }
 
-};
+    if (status && !constants.ORDER_STATUS.includes(status)) {
+      return reject(constants.errors.INVALID_ARGS);
+    }
+
+    if (restaurantUuid) {
+      const restaurant = await db.Restaurant.findByPk(restaurantUuid, {
+        attributes: ['serviceType'],
+      });
+
+      if (restaurant.serviceType === constants.SERVICE_TYPES.SELF) {
+        tableUuid = null;
+      }
+    }
+
+    if (consumerUuid && tableUuid) {
+      no = undefined;
+      status = undefined;
+      tableUuid = undefined;
+    }
+
+    try {
+      await db.sequelize.transaction(async (transaction) => {
+        const tempOrder = await GetOrderInfo(uuid, restaurantUuid, consumerUuid);
+
+        if (tempOrder.status === 'paid') {
+          throw constants.errors.ORDER_HAVE_ALREADY_PAID;
+        }
+
+        await tempOrder.update({
+          no,
+          status,
+          tableUuid,
+        }, {
+          transaction,
+        });
+
+        if (!items || items.length === 0) {
+          return tempOrder;
+        }
+
+        // convert filter items
+        const orderItems = await items
+          .filter((item) => (item && item.uuid && item.quantity))
+          .map((item) => ({
+            orderUuid: tempOrder.uuid,
+            itemUuid: item.uuid,
+            options: (item.options && item.options.join(';')) || '',
+            quantity: item.quantity,
+          }));
+
+        if (!orderItems || orderItems.length === 0) {
+          throw constants.errors.INVALID_ARGS;
+        }
+
+        const upsertOrderItem = async (orderItem) => {
+          const tempItem = await db.OrderItems.findOne({
+            transaction,
+            where: {
+              orderUuid: orderItem.orderUuid,
+              itemUuid: orderItem.itemUuid,
+              options: orderItem.options,
+            },
+          });
+
+          if (!tempItem) {
+            return orderItem;
+          }
+
+          if (tempItem.quantity + orderItem.quantity <= 0) {
+            await db.OrderItems.destroy({
+              transaction,
+              where: {
+                orderUuid: orderItem.orderUuid,
+                itemUuid: orderItem.itemUuid,
+                options: orderItem.options,
+              },
+            });
+
+            return null;
+          }
+
+          await db.OrderItems.increment('quantity', {
+            by: orderItem.quantity,
+            transaction,
+            where: {
+              orderUuid: orderItem.orderUuid,
+              itemUuid: orderItem.itemUuid,
+              options: orderItem.options,
+            },
+          });
+          return null;
+        };
+
+        const bulkItems = (await Promise.all(
+          orderItems.map(async (orderItem) => upsertOrderItem(orderItem)),
+        )
+        ).filter((i) => i);
+
+        await db.OrderItems.bulkCreate(bulkItems, { transaction });
+        await tempOrder.update({
+          status: 'waiting',
+        }, { transaction });
+
+        return tempOrder;
+      });
+
+      const orderInfo = await GetOrderInfo(uuid, restaurantUuid, consumerUuid);
+      return resolve(orderInfo);
+    } catch (err) {
+      return reject(err);
+    }
+  } catch (err) {
+    const e = constants.errors.UNKNOWN;
+    e.extra = err;
+    return reject(e);
+  }
+});
 
 const DeleteOrder = (uuid, restaurantUuid, consumerUuid) => new Promise(async (resolve, reject) => {
   try {

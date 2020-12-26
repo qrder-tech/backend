@@ -136,8 +136,8 @@ const CreateOrder = (_restaurantUuid, consumerUuid, { restaurantUuid, tableUuid,
       const isTableExist = await db.Table.findOne({
         where: {
           uuid: tableUuid,
-          restaurantUuid: resUuid
-        }
+          restaurantUuid: resUuid,
+        },
       });
 
       if (!isTableExist) {
@@ -147,37 +147,39 @@ const CreateOrder = (_restaurantUuid, consumerUuid, { restaurantUuid, tableUuid,
 
     // create order
     try {
-      const order = db.sequelize.transaction(async transaction => {
-        const order = await db.Order.create({
+      const order = db.sequelize.transaction(async (transaction) => {
+        const tempOrder = await db.Order.create({
           uuid: _uuid(),
           no: 0,
           restaurantUuid: resUuid,
           tableUuid,
-          consumerUuid
+          consumerUuid,
         }, {
-          transaction
+          transaction,
         });
 
-        if (!order) {
+        if (!tempOrder) {
           return reject(constants.errors.UNKNOWN);
         }
 
         // add each item to the order thorugh orderItems
         let validItemCount = 0;
-        await Promise.all(items.map(async item => {
+        await Promise.all(items.map(async (item) => {
           if (!item || !item.uuid || !item.quantity) {
-            console.log("Invalid item: ", item);
+            // console.log('Invalid item: ', item);
           } else {
-            console.log("item:", item);
+            // console.log('item:', item);
             try {
               await db.OrderItems.create({
-                orderUuid: order.uuid,
+                orderUuid: tempOrder.uuid,
                 itemUuid: item.uuid,
-                options: item.options || "",
-                quantity: item.quantity
+                options: item.options || '',
+                quantity: item.quantity,
               }, { transaction });
-              validItemCount++;
-            } catch { }
+              validItemCount += 1;
+            } catch (err) {
+              // console.log(err);
+            }
           }
 
           return item;
@@ -187,12 +189,12 @@ const CreateOrder = (_restaurantUuid, consumerUuid, { restaurantUuid, tableUuid,
           throw constants.errors.INVALID_ARGS;
         }
 
-        return order;
+        return tempOrder;
       });
 
       return resolve(order);
-    } catch (tErr) {
-      return reject(tErr);
+    } catch (err) {
+      return reject(err);
     }
   } catch (err) {
     const e = constants.errors.UNKNOWN;

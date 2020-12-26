@@ -26,10 +26,9 @@ router.post('/', async (req, res /* next */) => {
     if (uuid) {
       const result = await OrderService.UpdateOrder(uuid, restaurant && restaurant.uuid, consumer && consumer.uuid, payload);
       return res.send(result);
-    } else {
-      const result = await OrderService.CreateOrder(restaurant && restaurant.uuid, consumer && consumer.uuid, payload);
-      return res.send(result);
     }
+    const result = await OrderService.CreateOrder(restaurant && restaurant.uuid, consumer && consumer.uuid, payload);
+    return res.send(result);
   } catch (err) {
     return res.status(err.code || 500).send(err);
   }

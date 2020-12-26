@@ -132,7 +132,7 @@ const CreateOrder = (_restaurantUuid, consumerUuid, { restaurantUuid, tableUuid,
     }
 
     // check table is exists
-    if (tableUuid) {
+    if (restaurant.serviceType === constants.SERVICE_TYPES.NORMAL && tableUuid) {
       const isTableExist = await db.Table.findOne({
         where: {
           uuid: tableUuid,
@@ -143,6 +143,8 @@ const CreateOrder = (_restaurantUuid, consumerUuid, { restaurantUuid, tableUuid,
       if (!isTableExist) {
         return reject(constants.errors.ENTITY_NOT_EXIST);
       }
+    } else {
+      tableUuid = null;
     }
 
     // create order

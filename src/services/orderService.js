@@ -41,8 +41,6 @@ const GetOrderInfo = (uuid, restaurantUuid, consumerUuid) => new Promise(async (
       return entity;
     });
 
-
-
     if (!order) {
       return reject(constants.errors.ENTITY_NOT_EXIST);
     }
@@ -172,16 +170,16 @@ const CreateOrder = (_restaurantUuid, consumerUuid, { restaurantUuid, tableUuid,
         }
 
         // add each item to the order thorugh orderItems
-        const orderItems = items.map(item => {
-          if (item && item.uuid && item.quantity) {
-            return {
-              orderUuid: tempOrder.uuid,
-              itemUuid: item.uuid,
-              options: (item.options && item.options.join(";")) || "",
-              quantity: item.quantity,
-            }
-          }
-        });
+        const orderItems = items
+          .filter((item) => (item && item.uuid && item.quantity))
+          .map((item) => ({
+            orderUuid: tempOrder.uuid,
+            itemUuid: item.uuid,
+            options: (item.options && item.options.join(';')) || '',
+            quantity: item.quantity,
+          }));
+
+        console.log(orderItems);
 
         if (!orderItems || orderItems.length === 0) {
           throw constants.errors.INVALID_ARGS;

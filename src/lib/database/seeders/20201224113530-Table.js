@@ -1,5 +1,5 @@
 const moment = require('moment');
-const { v4: uuid } = require('uuid');
+// const { v4: uuid } = require('uuid');
 
 module.exports = {
   up: async (queryInterface) => {

@@ -183,7 +183,6 @@ const GetRestaurantTables = (restaurantUuid) => new Promise(async (resolve, reje
 
     return resolve(tables);
   } catch (err) {
-    console.error(err);
     const e = constants.errors.UNKNOWN;
     e.extra = err;
     return reject(e);

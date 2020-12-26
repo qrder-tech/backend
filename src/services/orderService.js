@@ -137,14 +137,14 @@ const CreateOrder = (_restaurantUuid, consumerUuid, { restaurantUuid, tableUuid,
 
     // check table is exists
     if (restaurant.serviceType === constants.SERVICE_TYPES.NORMAL && tableUuid) {
-      const isTableExist = await db.Table.findOne({
+      const table = await db.Table.findOne({
         where: {
           uuid: tableUuid,
           restaurantUuid: resUuid,
         },
       });
 
-      if (!isTableExist) {
+      if (!table) {
         return reject(constants.errors.ENTITY_NOT_EXIST);
       }
     } else {
@@ -193,6 +193,23 @@ const CreateOrder = (_restaurantUuid, consumerUuid, { restaurantUuid, tableUuid,
 
         if (!validItemCount) {
           throw constants.errors.INVALID_ARGS;
+        }
+
+        if (tableUuid) {
+          const table = await db.Table.findOne({
+            where: {
+              uuid: tableUuid,
+              restaurantUuid: resUuid,
+            },
+          }, {
+            transaction,
+          });
+
+          await table.update({
+            status: 'occupied',
+          }, {
+            transaction,
+          });
         }
 
         return tempOrder;
@@ -251,7 +268,7 @@ const PayOrder = (uuid, restaurantUuid, consumerUuid, { token }) => new Promise(
     }
 
     try {
-      const order = db.sequelize.transaction(async (transaction) => {
+      const order = await db.sequelize.transaction(async (transaction) => {
         const orderEntity = await GetOrderInfo(uuid, restaurantUuid, consumerUuid);
 
         if (orderEntity.status === 'paid') {
@@ -278,6 +295,28 @@ const PayOrder = (uuid, restaurantUuid, consumerUuid, { token }) => new Promise(
 
         return orderEntity;
       });
+
+      // unoccupy table if there is no active order
+      const { tableUuid } = order;
+      if (tableUuid) {
+        const table = await db.Table.findByPk(tableUuid, {
+          include: {
+            model: db.Order,
+            where: {
+              status: {
+                [Op.ne]: 'paid',
+              },
+            },
+            required: false,
+          },
+        });
+
+        if (table && table.Orders && table.Orders.length === 0) {
+          await table.update({
+            status: null,
+          });
+        }
+      }
 
       return resolve(order);
     } catch (err) {

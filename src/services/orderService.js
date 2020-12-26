@@ -1,8 +1,8 @@
 // import validator from 'validator';
 import { Op } from 'sequelize';
-// import { v4 as _uuid } from 'uuid';
+import { v4 as _uuid } from 'uuid';
 
-// import ConsumerService from './consumerService';
+import ConsumerService from './consumerService';
 
 import { db } from '../lib/clients';
 import constants from '../lib/constants';
@@ -92,9 +92,114 @@ const GetAllOrders = (restaurantUuid, consumerUuid /* , { scope, start, length }
   }
 });
 
-const CreateOrder = (/* restaurantUuid, consumerUuid, { tableUuid, items } */) => {
+const CreateOrder = (_restaurantUuid, consumerUuid, { restaurantUuid, tableUuid, items }) => new Promise(async (resolve, reject) => {
+  try {
+    if (!items) {
+      return reject(constants.errors.MISSING_ARGS);
+    }
 
-};
+    // check user has active order
+    if (consumerUuid) {
+      const consumer = await ConsumerService.GetConsumerInfo(consumerUuid);
+
+      if (!consumer) {
+        return reject(constants.errors.ENTITY_NOT_EXIST);
+      }
+
+      if (consumer.Orders && consumer.Orders.length > 0) {
+        return reject(constants.errors.CONSUMER_HAS_ALREADY_ORDER);
+      }
+    }
+
+    // get restaurant
+    const resUuid = _restaurantUuid || restaurantUuid;
+
+    if (!resUuid) {
+      return reject(constants.errors.MISSING_ARGS);
+    }
+
+    const restaurant = await db.Restaurant.findByPk(resUuid, {
+      attributes: ['serviceType'],
+    });
+
+    if (!restaurant) {
+      return reject(constants.errors.ENTITY_NOT_EXIST);
+    }
+
+    // check table uuid when restaurant service type is normal
+    if (restaurant.serviceType === constants.SERVICE_TYPES.NORMAL && !tableUuid) {
+      return reject(constants.errors.MISSING_ARGS);
+    }
+
+    // check table is exists
+    if (tableUuid) {
+      const isTableExist = await db.Table.findOne({
+        where: {
+          uuid: tableUuid,
+          restaurantUuid: resUuid
+        }
+      });
+
+      if (!isTableExist) {
+        return reject(constants.errors.ENTITY_NOT_EXIST);
+      }
+    }
+
+    // create order
+    try {
+      const order = db.sequelize.transaction(async transaction => {
+        const order = await db.Order.create({
+          uuid: _uuid(),
+          no: 0,
+          restaurantUuid: resUuid,
+          tableUuid,
+          consumerUuid
+        }, {
+          transaction
+        });
+
+        if (!order) {
+          return reject(constants.errors.UNKNOWN);
+        }
+
+        // add each item to the order thorugh orderItems
+        let validItemCount = 0;
+        await Promise.all(items.map(async item => {
+          if (!item || !item.uuid || !item.quantity) {
+            console.log("Invalid item: ", item);
+          } else {
+            console.log("item:", item);
+            try {
+              await db.OrderItems.create({
+                orderUuid: order.uuid,
+                itemUuid: item.uuid,
+                options: item.options || "",
+                quantity: item.quantity
+              }, { transaction });
+              validItemCount++;
+            } catch { }
+          }
+
+          return item;
+        }));
+
+        if (!validItemCount) {
+          throw constants.errors.INVALID_ARGS;
+        }
+
+        return order;
+      });
+
+      return resolve(order);
+    } catch (tErr) {
+      return reject(tErr);
+    }
+  } catch (err) {
+    const e = constants.errors.UNKNOWN;
+    e.extra = err;
+    return reject(e);
+  }
+});
 
 const UpdateOrder = (/* uuid, restaurantUuid, consumerUuid, { tableUuid, items } */) => {
 

@@ -17,8 +17,22 @@ router.get('/', async (req, res /* next */) => {
   }
 });
 
-router.post('/', async (/* req, res, next */) => {
+router.post('/', async (req, res /* next */) => {
+  const { consumer, restaurant } = req;
+  const { uuid } = req.query;
+  const payload = req.body;
 
+  try {
+    if (uuid) {
+      const result = await OrderService.UpdateOrder(uuid, restaurant && restaurant.uuid, consumer && consumer.uuid, payload);
+      return res.send(result);
+    } else {
+      const result = await OrderService.CreateOrder(restaurant && restaurant.uuid, consumer && consumer.uuid, payload);
+      return res.send(result);
+    }
+  } catch (err) {
+    return res.status(err.code || 500).send(err);
+  }
 });
 
 router.delete('/', async (req, res /* next */) => {

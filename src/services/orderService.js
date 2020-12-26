@@ -29,8 +29,10 @@ const GetOrderInfo = (uuid, restaurantUuid, consumerUuid) => new Promise(async (
         return entity;
       }
 
+      entity.totalPrice = 0;
       entity.dataValues.totalPrice = 0;
       entity.Items.map((item) => {
+        entity.totalPrice += item.price * item.OrderItems.quantity;
         entity.dataValues.totalPrice += item.price * item.OrderItems.quantity;
         return item;
       });
@@ -42,7 +44,7 @@ const GetOrderInfo = (uuid, restaurantUuid, consumerUuid) => new Promise(async (
       return reject(constants.errors.ENTITY_NOT_EXIST);
     }
 
-    return resolve(order.dataValues);
+    return resolve(order);
   } catch (err) {
     const e = constants.errors.UNKNOWN;
     e.extra = err;
@@ -71,8 +73,10 @@ const GetAllOrders = (restaurantUuid, consumerUuid /* , { scope, start, length }
       }
 
       entities.map((entity) => {
+        entity.totalPrice = 0;
         entity.dataValues.totalPrice = 0;
         entity.Items.map((item) => {
+          entity.totalPrice += item.price * item.OrderItems.quantity;
           entity.dataValues.totalPrice += item.price * item.OrderItems.quantity;
           return item;
         });
@@ -149,7 +153,7 @@ const CreateOrder = (_restaurantUuid, consumerUuid, { restaurantUuid, tableUuid,
 
     // create order
     try {
-      const order = db.sequelize.transaction(async (transaction) => {
+      const order = await db.sequelize.transaction(async (transaction) => {
         const tempOrder = await db.Order.create({
           uuid: _uuid(),
           no: 0,
@@ -194,7 +198,8 @@ const CreateOrder = (_restaurantUuid, consumerUuid, { restaurantUuid, tableUuid,
         return tempOrder;
       });
 
-      return resolve(order);
+      const orderInfo = GetOrderInfo(order.dataValues.uuid, restaurantUuid, consumerUuid);
+      return resolve(orderInfo);
     } catch (err) {
       return reject(err);
     }
@@ -239,42 +244,50 @@ const DeleteOrder = (uuid, restaurantUuid, consumerUuid) => new Promise(async (r
   }
 });
 
-const PayOrder = (uuid, restaurantUuid, consumerUuid) => new Promise(async (resolve, reject) => {
+const PayOrder = (uuid, restaurantUuid, consumerUuid, { token }) => new Promise(async (resolve, reject) => {
   try {
     if (!uuid) {
       return reject(constants.errors.MISSING_ARGS);
     }
 
-    const order = await db.Order.update({
-      status: 'paid',
-    }, {
-      where: {
-        uuid,
-        [Op.or]: [
-          restaurantUuid && { restaurantUuid: restaurantUuid || null },
-          consumerUuid && { consumerUuid: consumerUuid || null },
-        ],
-        status: {
-          [Op.ne]: 'paid',
-        },
-      },
-    });
+    try {
+      const order = db.sequelize.transaction(async transaction => {
+        const orderEntity = await GetOrderInfo(uuid, restaurantUuid, consumerUuid);
 
-    /*
-    todo: find consumerUuid
-    if (consumerUuid && order && order[0] === 1) {
-      const temp = await GetOrderInfo(uuid, restaurantUuid, consumerUuid);
+        if (orderEntity.status === 'paid') {
+          throw constants.errors.ORDER_HAVE_ALREADY_PAID;
+        }
 
-      if (temp) {
-        const totalPrice = temp.totalPrice;
+        await orderEntity.update({
+          status: 'paid'
+        }, {
+          transaction
+        });
 
-        ConsumerService.UpdateConsumerBalance(consumerUuid, totalPrice * -1);
-      }
+        // Decrease consumer balance
+        if (consumerUuid && !token) {
+          const consumer = await ConsumerService.GetConsumerInfo(consumerUuid);
+          const totalPrice = orderEntity.totalPrice;
+
+          if (consumer.balance < totalPrice) {
+            throw constants.errors.CONSUMER_INSUFFICIENT_BALANCE;
+          }
+
+          consumer.decrement('balance', { by: totalPrice });
+        }
+
+        return orderEntity;
+      });
+
+      return resolve(order);
+    } catch (err) {
+      return reject(err);
     }
-    */
-
-    return resolve(order);
   } catch (err) {
+    if (err && err.code) {
+      return reject(err);
+    }
+
     const e = constants.errors.UNKNOWN;
     e.extra = err;
     return reject(e);

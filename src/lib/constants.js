@@ -17,5 +17,7 @@ export default {
     ENTITY_NOT_EXIST: { code: 400, msg: 'Entity does not exist via given parameters' },
     UNKNOWN: { code: 400, msg: 'Unknown error' },
     CONSUMER_HAS_ALREADY_ORDER: { code: 400, msg: 'Consumer has already an active order' },
+    CONSUMER_INSUFFICIENT_BALANCE: { code: 400, msg: 'Insufficient Balance' },
+    ORDER_HAVE_ALREADY_PAID: { code: 400, msg: 'Order has already paid' }
   },
 };

@@ -350,7 +350,7 @@ uuid | _(Required)_ | Uuid | Uuid of the order.
 ##### Body Params:
 Name | Type | Information
 -- | -- | --
-token _(Dependent)_ | String | It will be received from an external online payment system. If the request is made by a `consumer`, it is required.
+token _(Dependent)_ | String | It will be received from an external online payment system. If the request is made by a `consumer`, it is optional. If it not exists, `consumer` balance will be used.
 ##### Response:
 Name | Type | Information
 -- | -- | --

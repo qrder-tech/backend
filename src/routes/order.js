@@ -61,9 +61,10 @@ router.get('/all', async (req, res /* next */) => {
 router.post('/pay', async (req, res /* next */) => {
   const { consumer, restaurant } = req;
   const { uuid } = req.query;
+  const payload = req.body;
 
   try {
-    const result = await OrderService.PayOrder(uuid, restaurant && restaurant.uuid, consumer && consumer.uuid);
+    const result = await OrderService.PayOrder(uuid, restaurant && restaurant.uuid, consumer && consumer.uuid, payload);
     return res.send(result);
   } catch (err) {
     return res.status(err.code || 500).send(err);

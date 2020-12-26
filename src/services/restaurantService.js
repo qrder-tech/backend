@@ -206,14 +206,22 @@ const CreateRestaurantTable = (restaurantUuid, { name }) => new Promise(async (r
   }
 });
 
-const UpdateRestaurantTable = (uuid, restaurantUuid, { name }) => new Promise(async (resolve, reject) => {
+const UpdateRestaurantTable = (uuid, restaurantUuid, { name, status, services }) => new Promise(async (resolve, reject) => {
   try {
-    if (!name) {
+    if (name === undefined && status === undefined && services === undefined) {
       return reject(constants.errors.MISSING_ARGS);
     }
 
+    if ((status && status !== 'occupied')) {
+      return reject(constants.errors.INVALID_ARGS);
+    }
+
+    const filteredServices = services && await Promise.all(services.filter((service) => (service.name && service.createdAt)));
+
     const table = await db.Table.update({
       name,
+      status,
+      services: (filteredServices && JSON.stringify(filteredServices)) || undefined,
     }, {
       where: {
         uuid,

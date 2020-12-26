@@ -251,7 +251,7 @@ const PayOrder = (uuid, restaurantUuid, consumerUuid, { token }) => new Promise(
     }
 
     try {
-      const order = db.sequelize.transaction(async transaction => {
+      const order = db.sequelize.transaction(async (transaction) => {
         const orderEntity = await GetOrderInfo(uuid, restaurantUuid, consumerUuid);
 
         if (orderEntity.status === 'paid') {
@@ -259,15 +259,15 @@ const PayOrder = (uuid, restaurantUuid, consumerUuid, { token }) => new Promise(
         }
 
         await orderEntity.update({
-          status: 'paid'
+          status: 'paid',
         }, {
-          transaction
+          transaction,
         });
 
         // Decrease consumer balance
         if (consumerUuid && !token) {
           const consumer = await ConsumerService.GetConsumerInfo(consumerUuid);
-          const totalPrice = orderEntity.totalPrice;
+          const { totalPrice } = orderEntity;
 
           if (consumer.balance < totalPrice) {
             throw constants.errors.CONSUMER_INSUFFICIENT_BALANCE;

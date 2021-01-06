@@ -180,6 +180,10 @@ const GetRestaurantMenu = (restaurantUuid) => new Promise(async (resolve, reject
  */
 const GetRestaurantTable = (uuid, restaurantUuid) => new Promise(async (resolve, reject) => {
   try {
+    if (!uuid) {
+      return reject(constants.errors.MISSING_ARGS);
+    }
+
     const table = await db.Table.findOne({
       include: {
         model: db.Order,

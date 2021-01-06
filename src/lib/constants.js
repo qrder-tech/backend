@@ -16,6 +16,10 @@ export default {
     null,
     'occupied',
   ],
+  RESTAURANT_SERVICES: [
+    'waiter',
+    'payment',
+  ],
   errors: {
     UNAUTH: { code: 401, msg: 'Unauthorized action' },
     INVALID_TOKEN: { code: 401, msg: 'Invalid token' },

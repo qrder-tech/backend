@@ -5,10 +5,13 @@ import { v4 as _uuid } from 'uuid';
 import { db } from '../lib/clients';
 import constants from '../lib/constants';
 
+/**
+ * Restaurant Info Operations
+ */
 const GetRestaurantInfo = (uuid) => new Promise(async (resolve, reject) => {
   try {
     const restaurant = await db.Restaurant.findByPk(uuid);
-    return resolve(restaurant.dataValues);
+    return resolve(restaurant);
   } catch (err) {
     const e = constants.errors.UNKNOWN;
     e.extra = err;
@@ -63,6 +66,7 @@ const UpdateRestaurantInfo = (uuid, {
         uuid,
       },
     });
+
     return resolve(restaurant);
   } catch (err) {
     const e = constants.errors.UNKNOWN;
@@ -71,6 +75,68 @@ const UpdateRestaurantInfo = (uuid, {
   }
 });
 
+const GetRestaurantMetrics = (uuid) => new Promise(async (resolve, reject) => {
+  try {
+    const tables = await db.Table.findAll({
+      attributes: ['status', 'services'],
+      where: {
+        restaurantUuid: uuid,
+      },
+    }).then((entities) => {
+      if (!entities) {
+        return entities;
+      }
+
+      entities.map((entity) => {
+        // convert services
+        if (entity.services) {
+          entity.services = JSON.parse(entity.services);
+        }
+
+        return entity;
+      });
+
+      return entities;
+    });
+
+    const orders = await db.Order.findAll({
+      attributes: ['status'],
+      where: {
+        restaurantUuid: uuid,
+      },
+    });
+
+    const services = tables.filter((table) => (table.services)).map((table) => (table.services.map((service) => service.name)));
+
+    const filterService = (serviceName) => services
+      .map((serviceArr) => serviceArr.filter((service) => (service === serviceName)))
+      .filter((serviceArr) => (serviceArr.length > 0));
+
+    return resolve({
+      tables: {
+        occupied: tables.filter((table) => (table.status === 'occupied')).length,
+        free: tables.filter((table) => (table.status === null)).length,
+        mostDelayedNo: -1,
+      },
+      orders: {
+        waiting: orders.filter((order) => (order.status === 'waiting')).length,
+        served: orders.filter((order) => (order.status === 'served')).length,
+      },
+      services: {
+        waiter: filterService('waiter').length,
+        payment: filterService('payment').length,
+      },
+    });
+  } catch (err) {
+    const e = constants.errors.UNKNOWN;
+    e.extra = err;
+    return reject(e);
+  }
+});
+
+/**
+ * Menu Operations
+ */
 const GetRestaurantMenu = (restaurantUuid) => new Promise(async (resolve, reject) => {
   try {
     const items = await db.Item.findAll({
@@ -102,6 +168,87 @@ const GetRestaurantMenu = (restaurantUuid) => new Promise(async (resolve, reject
     };
 
     return resolve(Menu);
+  } catch (err) {
+    const e = constants.errors.UNKNOWN;
+    e.extra = err;
+    return reject(e);
+  }
+});
+
+/**
+ * Table Operations
+ */
+const GetRestaurantTable = (uuid, restaurantUuid) => new Promise(async (resolve, reject) => {
+  try {
+    const table = await db.Table.findOne({
+      include: {
+        model: db.Order,
+        where: {
+          status: {
+            [Op.ne]: 'paid',
+          },
+        },
+        required: false,
+      },
+      order: [
+        ['name', 'ASC'],
+      ],
+      where: {
+        uuid,
+        restaurantUuid,
+      },
+    }).then((entity) => {
+      if (!entity) {
+        return entity;
+      }
+
+      // convert services
+      if (entity.services) {
+        entity.services = JSON.parse(entity.services);
+
+        // calculate most delated date
+        if (entity.services) {
+          entity.services.map((service) => {
+            if (entity.dataValues.mostDelayedDate) {
+              const tempDate = new Date(service.createdAt);
+              if (tempDate - entity.dataValues.mostDelayedDate < 0) {
+                entity.dataValues.mostDelayedDate = tempDate;
+              }
+            } else {
+              entity.dataValues.mostDelayedDate = new Date(service.createdAt);
+            }
+
+            return service;
+          });
+        }
+      }
+
+      if (entity.Orders) {
+        entity.Orders.map(async (order) => {
+          // calculate most delated date
+          if (order.status !== 'served') {
+            if (entity.dataValues.mostDelayedDate) {
+              const tempDate = new Date(order.createdAt);
+              if (tempDate - entity.dataValues.mostDelayedDate < 0) {
+                entity.dataValues.mostDelayedDate = tempDate;
+              }
+            } else {
+              entity.dataValues.mostDelayedDate = new Date(order.createdAt);
+            }
+          }
+
+          return order;
+        });
+      }
+
+      return entity;
+    });
+
+    if (!table) {
+      return reject(constants.errors.ENTITY_NOT_EXIST);
+    }
+
+    return resolve(table);
   } catch (err) {
     const e = constants.errors.UNKNOWN;
     e.extra = err;
@@ -198,37 +345,6 @@ const CreateRestaurantTable = (restaurantUuid, { name }) => new Promise(async (r
       restaurantUuid,
     });
 
-    return resolve(table.dataValues);
-  } catch (err) {
-    const e = constants.errors.UNKNOWN;
-    e.extra = err;
-    return reject(e);
-  }
-});
-
-const UpdateRestaurantTable = (uuid, restaurantUuid, { name, status, services }) => new Promise(async (resolve, reject) => {
-  try {
-    if (name === undefined && status === undefined && services === undefined) {
-      return reject(constants.errors.MISSING_ARGS);
-    }
-
-    if ((status && status !== 'occupied')) {
-      return reject(constants.errors.INVALID_ARGS);
-    }
-
-    const filteredServices = services && await Promise.all(services.filter((service) => (service.name && service.createdAt)));
-
-    const table = await db.Table.update({
-      name,
-      status,
-      services: (filteredServices && JSON.stringify(filteredServices)) || undefined,
-    }, {
-      where: {
-        uuid,
-        restaurantUuid,
-      },
-    });
-
     return resolve(table);
   } catch (err) {
     const e = constants.errors.UNKNOWN;
@@ -237,6 +353,156 @@ const UpdateRestaurantTable = (uuid, restaurantUuid, { name, status, services })
   }
 });
 
+const UpdateRestaurantTable = (uuid, restaurantUuid, { name, status }) => new Promise(async (resolve, reject) => {
+  try {
+    if (name === undefined && status === undefined) {
+      return reject(constants.errors.MISSING_ARGS);
+    }
+
+    if (status && !constants.TABLE_STATUS.includes(status)) {
+      return reject(constants.errors.INVALID_ARGS);
+    }
+
+    const table = await db.Table.findOne({
+      where: {
+        uuid,
+        restaurantUuid,
+      },
+    });
+
+    if (!table) {
+      return reject(constants.errors.ENTITY_NOT_EXIST);
+    }
+
+    await table.update({
+      name,
+      status,
+    });
+
+    const updatedTable = await GetRestaurantTable(uuid, restaurantUuid);
+    return resolve(updatedTable);
+  } catch (err) {
+    const e = constants.errors.UNKNOWN;
+    e.extra = err;
+    return reject(e);
+  }
+});
+
+const DeleteRestaurantTable = (uuid, restaurantUuid) => new Promise(async (resolve, reject) => {
+  try {
+    if (!uuid) {
+      return reject(constants.errors.MISSING_ARGS);
+    }
+
+    const table = await db.Table.findOne({
+      where: {
+        uuid,
+        restaurantUuid,
+      },
+    });
+
+    if (table) {
+      await table.destroy();
+    } else {
+      return reject(constants.errors.ENTITY_NOT_EXIST);
+    }
+
+    return resolve();
+  } catch (err) {
+    const e = constants.errors.UNKNOWN;
+    e.extra = err;
+    return reject(e);
+  }
+});
+
+const AddRestaurantTableService = (uuid, restaurantUuid, { name, createdAt }) => new Promise(async (resolve, reject) => {
+  try {
+    if (!uuid || !name || !createdAt) {
+      return reject(constants.errors.MISSING_ARGS);
+    }
+
+    if (!constants.RESTAURANT_SERVICES.includes(name)) {
+      return reject(constants.errors.INVALID_ARGS);
+    }
+
+    const table = await db.Table.findOne({
+      where: {
+        uuid,
+        restaurantUuid,
+      },
+    });
+
+    if (!table) {
+      return reject(constants.errors.ENTITY_NOT_EXIST);
+    }
+
+    const services = table.services ? JSON.parse(table.services) : [];
+
+    const isServiceExist = services.filter((service) => (service.name === name));
+
+    if (isServiceExist.length > 0) {
+      return reject(constants.errors.DUPLICATED_ARGS);
+    }
+
+    services.push({
+      name,
+      createdAt,
+    });
+
+    await table.update({
+      services: JSON.stringify(services),
+    });
+
+    const updatedTable = await GetRestaurantTable(uuid, restaurantUuid);
+    return resolve(updatedTable);
+  } catch (err) {
+    const e = constants.errors.UNKNOWN;
+    e.extra = err;
+    return reject(e);
+  }
+});
+
+const DeleteRestaurantTableService = (uuid, restaurantUuid, { name }) => new Promise(async (resolve, reject) => {
+  try {
+    if (!uuid || !name) {
+      return reject(constants.errors.MISSING_ARGS);
+    }
+
+    if (!constants.RESTAURANT_SERVICES.includes(name)) {
+      return reject(constants.errors.INVALID_ARGS);
+    }
+
+    const table = await db.Table.findOne({
+      where: {
+        uuid,
+        restaurantUuid,
+      },
+    });
+
+    if (!table) {
+      return reject(constants.errors.ENTITY_NOT_EXIST);
+    }
+
+    const services = table.services ? JSON.parse(table.services) : [];
+
+    const filteredServices = services.filter((service) => (service.name !== name));
+
+    await table.update({
+      services: filteredServices.length > 0 ? JSON.stringify(filteredServices) : null,
+    });
+
+    const updatedTable = await GetRestaurantTable(uuid, restaurantUuid);
+    return resolve(updatedTable);
+  } catch (err) {
+    const e = constants.errors.UNKNOWN;
+    e.extra = err;
+    return reject(e);
+  }
+});
+
+/**
+ * Item Operations
+ */
 const GetRestaurantItem = (uuid, restaurantUuid) => new Promise(async (resolve, reject) => {
   try {
     if (!uuid) {
@@ -353,10 +619,15 @@ const DeleteRestaurantItem = (uuid, restaurantUuid) => new Promise(async (resolv
 export default {
   GetRestaurantInfo,
   UpdateRestaurantInfo,
+  GetRestaurantMetrics,
   GetRestaurantMenu,
+  GetRestaurantTable,
   GetRestaurantTables,
   CreateRestaurantTable,
   UpdateRestaurantTable,
+  DeleteRestaurantTable,
+  AddRestaurantTableService,
+  DeleteRestaurantTableService,
   GetRestaurantItem,
   CreateRestaurantItem,
   UpdateRestaurantItem,

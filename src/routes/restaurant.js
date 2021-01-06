@@ -41,6 +41,17 @@ router.post('/me', async (req, res /* next */) => {
   }
 });
 
+router.get('/metrics', async (req, res) => {
+  const { restaurant } = req;
+
+  try {
+    const result = await RestaurantService.GetRestaurantMetrics(restaurant.uuid);
+    return res.send(result);
+  } catch (err) {
+    return res.status(err.code || 500).send(err);
+  }
+});
+
 router.get('/menu', async (req, res) => {
   const { restaurant } = req;
 
@@ -52,18 +63,19 @@ router.get('/menu', async (req, res) => {
   }
 });
 
-router.get('/tables', async (req, res /* next */) => {
+router.get('/table', async (req, res /* next */) => {
   const { restaurant } = req;
+  const { uuid } = req.query;
 
   try {
-    const result = await RestaurantService.GetRestaurantTables(restaurant.uuid);
+    const result = await RestaurantService.GetRestaurantTable(uuid, restaurant.uuid);
     return res.send(result);
   } catch (err) {
     return res.status(err.code || 500).send(err);
   }
 });
 
-router.post('/tables', async (req, res /* next */) => {
+router.post('/table', async (req, res /* next */) => {
   const { restaurant } = req;
   const { uuid } = req.query;
   const payload = req.body;
@@ -74,6 +86,55 @@ router.post('/tables', async (req, res /* next */) => {
       return res.send(result);
     }
     const result = await RestaurantService.CreateRestaurantTable(restaurant.uuid, payload);
+    return res.send(result);
+  } catch (err) {
+    return res.status(err.code || 500).send(err);
+  }
+});
+
+router.delete('/table', async (req, res /* next */) => {
+  const { restaurant } = req;
+  const { uuid } = req.query;
+
+  try {
+    const result = await RestaurantService.DeleteRestaurantTable(uuid, restaurant.uuid);
+    return res.send(result);
+  } catch (err) {
+    return res.status(err.code || 500).send(err);
+  }
+});
+
+router.post('/table/services', async (req, res /* next */) => {
+  const { restaurant } = req;
+  const { uuid } = req.query;
+  const payload = req.body;
+
+  try {
+    const result = await RestaurantService.AddRestaurantTableService(uuid, restaurant.uuid, payload);
+    return res.send(result);
+  } catch (err) {
+    return res.status(err.code || 500).send(err);
+  }
+});
+
+router.delete('/table/services', async (req, res /* next */) => {
+  const { restaurant } = req;
+  const { uuid } = req.query;
+  const payload = req.body;
+
+  try {
+    const result = await RestaurantService.DeleteRestaurantTableService(uuid, restaurant.uuid, payload);
+    return res.send(result);
+  } catch (err) {
+    return res.status(err.code || 500).send(err);
+  }
+});
+
+router.get('/tables', async (req, res /* next */) => {
+  const { restaurant } = req;
+
+  try {
+    const result = await RestaurantService.GetRestaurantTables(restaurant.uuid);
     return res.send(result);
   } catch (err) {
     return res.status(err.code || 500).send(err);

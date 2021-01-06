@@ -395,6 +395,7 @@ const PayOrder = (uuid, restaurantUuid, consumerUuid, { token }) => new Promise(
           throw constants.errors.ORDER_HAVE_ALREADY_PAID;
         }
 
+        // todo: if restaurant type is not self, then update as paid
         await orderEntity.update({
           status: 'paid',
         }, {

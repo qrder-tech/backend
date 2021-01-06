@@ -12,6 +12,7 @@ router.get('/', async (req, res /* next */) => {
     const result = await RestaurantService.GetRestaurantInfo(uuid);
     const Menu = await RestaurantService.GetRestaurantMenu(uuid);
     result.Menu = Menu;
+    result.dataValues.Menu = Menu;
     return res.send(result);
   } catch (err) {
     return res.status(err.code || 500).send(err);

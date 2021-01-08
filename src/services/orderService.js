@@ -435,6 +435,7 @@ const PayOrder = (uuid, restaurantUuid, consumerUuid, { token }) => new Promise(
         if (table && table.Orders && table.Orders.length === 0) {
           await table.update({
             status: null,
+            services: null,
           });
         }
       }

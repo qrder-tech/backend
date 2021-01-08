@@ -1,6 +1,7 @@
 import validator from 'validator';
 import { Op } from 'sequelize';
 import { v4 as _uuid } from 'uuid';
+import moment from 'moment';
 
 import { db } from '../lib/clients';
 import constants from '../lib/constants';
@@ -11,6 +12,7 @@ import constants from '../lib/constants';
 const GetRestaurantInfo = (uuid) => new Promise(async (resolve, reject) => {
   try {
     const restaurant = await db.Restaurant.findByPk(uuid);
+
     return resolve(restaurant);
   } catch (err) {
     const e = constants.errors.UNKNOWN;
@@ -359,7 +361,7 @@ const CreateRestaurantTable = (restaurantUuid, { name }) => new Promise(async (r
 
 const UpdateRestaurantTable = (uuid, restaurantUuid, { name, status }) => new Promise(async (resolve, reject) => {
   try {
-    if (name === undefined && status === undefined) {
+    if (!name && !status) {
       return reject(constants.errors.MISSING_ARGS);
     }
 
@@ -419,9 +421,9 @@ const DeleteRestaurantTable = (uuid, restaurantUuid) => new Promise(async (resol
   }
 });
 
-const AddRestaurantTableService = (uuid, restaurantUuid, { name, createdAt }) => new Promise(async (resolve, reject) => {
+const AddRestaurantTableService = (uuid, restaurantUuid, { name }) => new Promise(async (resolve, reject) => {
   try {
-    if (!uuid || !name || !createdAt) {
+    if (!uuid || !name) {
       return reject(constants.errors.MISSING_ARGS);
     }
 
@@ -450,7 +452,7 @@ const AddRestaurantTableService = (uuid, restaurantUuid, { name, createdAt }) =>
 
     services.push({
       name,
-      createdAt,
+      createdAt: moment().format('YYYY-MM-DD HH:mm:ss'),
     });
 
     await table.update({

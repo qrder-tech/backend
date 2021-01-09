@@ -1,6 +1,6 @@
 import express from 'express';
 
-import { RestaurantService } from '../services';
+import { RestaurantService, OfferService } from '../services';
 
 const router = express.Router();
 
@@ -47,6 +47,53 @@ router.get('/metrics', async (req, res) => {
 
   try {
     const result = await RestaurantService.GetRestaurantMetrics(restaurant.uuid);
+    return res.send(result);
+  } catch (err) {
+    return res.status(err.code || 500).send(err);
+  }
+});
+
+router.get('/offers', async (req, res) => {
+  const { restaurant } = req;
+  const { uuid } = req.query;
+
+  try {
+    if (uuid) {
+      const result = await OfferService.GetOffer(uuid, restaurant.uuid);
+      return res.send(result);
+    }
+
+    const result = await OfferService.GetOffers(restaurant.uuid);
+    return res.send(result);
+  } catch (err) {
+    return res.status(err.code || 500).send(err);
+  }
+});
+
+router.post('/offers', async (req, res) => {
+  const { restaurant } = req;
+  const { uuid } = req.query;
+  const payload = req.body;
+
+  try {
+    if (uuid) {
+      const result = await OfferService.UpdateOffer(uuid, restaurant.uuid, payload);
+      return res.send(result);
+    }
+
+    const result = await OfferService.CreateOffer(restaurant.uuid, payload);
+    return res.send(result);
+  } catch (err) {
+    return res.status(err.code || 500).send(err);
+  }
+});
+
+router.delete('/offers', async (req, res) => {
+  const { restaurant } = req;
+  const { uuid } = req.query;
+
+  try {
+    const result = await OfferService.DeleteOffer(uuid, restaurant.uuid);
     return res.send(result);
   } catch (err) {
     return res.status(err.code || 500).send(err);

@@ -1,6 +1,6 @@
 import express from 'express';
 
-import { ConsumerService } from '../services';
+import { ConsumerService, OfferService } from '../services';
 
 const router = express.Router();
 
@@ -38,6 +38,15 @@ router.post('/wallet', async (req, res /* next */) => {
 
   try {
     const result = await ConsumerService.UpdateConsumerBalance(consumer.uuid, payload);
+    return res.send(result);
+  } catch (err) {
+    return res.status(err.code || 500).send(err);
+  }
+});
+
+router.get('/offers', async (req, res /* next */) => {
+  try {
+    const result = await OfferService.GetOffers();
     return res.send(result);
   } catch (err) {
     return res.status(err.code || 500).send(err);

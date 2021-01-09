@@ -53,4 +53,39 @@ router.get('/offers', async (req, res /* next */) => {
   }
 });
 
+router.get('/favourites', async (req, res /* next */) => {
+  const { consumer } = req;
+
+  try {
+    const result = await ConsumerService.GetConsumerFavouriteRestaurants(consumer.uuid);
+    return res.send(result);
+  } catch (err) {
+    return res.status(err.code || 500).send(err);
+  }
+});
+
+router.post('/favourites', async (req, res /* next */) => {
+  const { consumer } = req;
+  const payload = req.body;
+
+  try {
+    const result = await ConsumerService.AddConsumerFavouriteRestaurant(consumer.uuid, payload);
+    return res.send(result);
+  } catch (err) {
+    return res.status(err.code || 500).send(err);
+  }
+});
+
+router.delete('/favourites', async (req, res /* next */) => {
+  const { consumer } = req;
+  const payload = req.body;
+
+  try {
+    const result = await ConsumerService.DeleteConsumerFavouriteRestaurant(consumer.uuid, payload);
+    return res.send(result);
+  } catch (err) {
+    return res.status(err.code || 500).send(err);
+  }
+});
+
 module.exports = router;

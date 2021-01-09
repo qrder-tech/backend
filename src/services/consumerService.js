@@ -95,8 +95,98 @@ const UpdateConsumerBalance = (uuid, { amount }) => new Promise(async (resolve, 
   }
 });
 
+const GetConsumerFavouriteRestaurants = (uuid) => new Promise(async (resolve, reject) => {
+  try {
+    const favouriteRestaurants = await db.ConsumerFavouriteRestaurants.findAll({
+      include: {
+        model: db.Restaurant,
+        attributes: [
+          'uuid',
+          'name',
+          'serviceType',
+          'img',
+        ],
+      },
+      where: {
+        consumerUuid: uuid,
+      },
+      order: [
+        ['createdAt', 'DESC'],
+      ],
+    });
+
+    const favourites = favouriteRestaurants.map((entity) => entity.Restaurant);
+
+    return resolve(favourites);
+  } catch (err) {
+    const e = constants.errors.UNKNOWN;
+    e.extra = err;
+    return reject(e);
+  }
+});
+
+const AddConsumerFavouriteRestaurant = (uuid, { restaurantUuid }) => new Promise(async (resolve, reject) => {
+  try {
+    if (!restaurantUuid) {
+      return reject(constants.errors.MISSING_ARGS);
+    }
+
+    const isFavouriteRestaurantExist = await db.ConsumerFavouriteRestaurants.findOne({
+      where: {
+        consumerUuid: uuid,
+        restaurantUuid,
+      },
+    });
+
+    if (isFavouriteRestaurantExist) {
+      return reject(constants.errors.DUPLICATED_ARGS);
+    }
+
+    const favouriteRestaurant = await db.ConsumerFavouriteRestaurants.create({
+      consumerUuid: uuid,
+      restaurantUuid,
+    });
+
+    return resolve(favouriteRestaurant);
+  } catch (err) {
+    const e = constants.errors.UNKNOWN;
+    e.extra = err;
+    return reject(e);
+  }
+});
+
+const DeleteConsumerFavouriteRestaurant = (uuid, { restaurantUuid }) => new Promise(async (resolve, reject) => {
+  try {
+    if (!restaurantUuid) {
+      return reject(constants.errors.MISSING_ARGS);
+    }
+
+    const favouriteRestaurant = await db.ConsumerFavouriteRestaurants.findOne({
+      where: {
+        consumerUuid: uuid,
+        restaurantUuid,
+      },
+    });
+
+    if (favouriteRestaurant) {
+      await favouriteRestaurant.destroy();
+    } else {
+      return reject(constants.errors.ENTITY_NOT_EXIST);
+    }
+
+    return resolve();
+  } catch (err) {
+    const e = constants.errors.UNKNOWN;
+    e.extra = err;
+    return reject(e);
+  }
+});
+
 export default {
   GetConsumerInfo,
   UpdateConsumerInfo,
   UpdateConsumerBalance,
+  GetConsumerFavouriteRestaurants,
+  AddConsumerFavouriteRestaurant,
+  DeleteConsumerFavouriteRestaurant,
 };

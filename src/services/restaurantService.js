@@ -9,10 +9,33 @@ import constants from '../lib/constants';
 /**
  * Restaurant Info Operations
  */
-const GetRestaurantInfo = (uuid) => new Promise(async (resolve, reject) => {
+const GetRestaurantInfo = (uuid, consumerUuid = null) => new Promise(async (resolve, reject) => {
   try {
-    const restaurant = await db.Restaurant.findByPk(uuid);
+    const restaurant = await db.Restaurant.findByPk(uuid).then(async (entity) => {
+      delete entity.password;
+      delete entity.dataValues.password;
 
+      if (!consumerUuid) {
+        return entity;
+      }
+
+      entity.favourite = false;
+      entity.dataValues.favourite = false;
+
+      const isFavouriteRestaurant = await db.ConsumerFavouriteRestaurants.findOne({
+        where: {
+          consumerUuid,
+          restaurantUuid: uuid,
+        },
+      });
+
+      if (isFavouriteRestaurant) {
+        entity.favourite = true;
+        entity.dataValues.favourite = true;
+      }
+
+      return entity;
+    });
     return resolve(restaurant);
   } catch (err) {
     const e = constants.errors.UNKNOWN;

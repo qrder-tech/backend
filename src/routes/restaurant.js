@@ -6,10 +6,11 @@ const router = express.Router();
 
 /* GET users listing. */
 router.get('/', async (req, res /* next */) => {
+  const { consumer } = req;
   const { uuid } = req.query;
 
   try {
-    const result = await RestaurantService.GetRestaurantInfo(uuid);
+    const result = await RestaurantService.GetRestaurantInfo(uuid, consumer.uuid);
     const Menu = await RestaurantService.GetRestaurantMenu(uuid);
     result.Menu = Menu;
     result.dataValues.Menu = Menu;

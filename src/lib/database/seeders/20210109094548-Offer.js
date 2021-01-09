@@ -21,6 +21,12 @@ module.exports = {
       img: 'https://image.freepik.com/free-vector/breakfast-banner-template_23-2148591442.jpg',
       createdAt: moment().format('YYYY-MM-DD HH:mm:ss'),
       updatedAt: moment().format('YYYY-MM-DD HH:mm:ss'),
+    }, {
+      uuid: 'bd9ecb54-6e51-4f86-a207-bedf9f46aa05',
+      restaurantUuid: 'b239690e-dfa1-4c6b-9e19-45c182d2b66b',
+      img: 'https://www.azfoodandwine.com/wp-content/uploads/2018/06/happy_hour_400x800_webtile.jpg',
+      createdAt: moment().format('YYYY-MM-DD HH:mm:ss'),
+      updatedAt: moment().format('YYYY-MM-DD HH:mm:ss'),
     }], {});
   },
 

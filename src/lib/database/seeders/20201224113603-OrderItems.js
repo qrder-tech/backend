@@ -9,6 +9,11 @@ module.exports = {
       quantity: 1,
     }, {
       orderUuid: '0dd93f2b-3c59-4f60-9b4c-733d8733f0f9',
+      itemUuid: 'c49532af-3256-442f-9f0d-aa4300e7c400',
+      options: '',
+      quantity: 1,
+    }, {
+      orderUuid: '0dd93f2b-3c59-4f60-9b4c-733d8733f0f9',
       itemUuid: '4de77898-70eb-49a2-80ca-583fd3d3ba84',
       options: '',
       quantity: 1,

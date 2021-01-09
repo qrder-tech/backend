@@ -14,7 +14,7 @@ const GetOrderInfo = (uuid, restaurantUuid, consumerUuid) => new Promise(async (
     }
 
     const order = await db.Order.findOne({
-      include: [{
+      include: {
         model: db.Restaurant,
         attributes: [
           'uuid',
@@ -22,9 +22,7 @@ const GetOrderInfo = (uuid, restaurantUuid, consumerUuid) => new Promise(async (
           'serviceType',
           'img',
         ],
-      }, {
-        model: db.Item,
-      }],
+      },
       where: {
         uuid,
         [Op.or]: [
@@ -37,7 +35,9 @@ const GetOrderInfo = (uuid, restaurantUuid, consumerUuid) => new Promise(async (
         return entity;
       }
 
-      const items = entity.Items;
+      const items = await entity.getItems();
+      entity.Items = items;
+      entity.dataValues.Items = items;
 
       entity.totalPrice = 0;
       entity.dataValues.totalPrice = 0;
@@ -71,7 +71,7 @@ const GetAllOrders = (restaurantUuid, consumerUuid, { scope = 'all' /* start, le
     ];
 
     const order = await db.Order.findAll({
-      include: [{
+      include: {
         model: db.Restaurant,
         attributes: [
           'uuid',
@@ -79,9 +79,7 @@ const GetAllOrders = (restaurantUuid, consumerUuid, { scope = 'all' /* start, le
           'serviceType',
           'img',
         ],
-      }, {
-        model: db.Item,
-      }],
+      },
       order: [
         ['status', 'DESC'],
         ['createdAt', 'DESC'],
@@ -99,7 +97,9 @@ const GetAllOrders = (restaurantUuid, consumerUuid, { scope = 'all' /* start, le
       }
 
       await Promise.all(entities.map(async (entity) => {
-        const items = entity.Items;
+        const items = await entity.getItems();
+        entity.Items = items;
+        entity.dataValues.Items = items;
 
         entity.totalPrice = 0;
         entity.dataValues.totalPrice = 0;

@@ -62,6 +62,15 @@ const GetAllOrders = (restaurantUuid, consumerUuid, { scope = 'all' /* start, le
     ];
 
     const order = await db.Order.findAll({
+      include: {
+        model: db.Restaurant,
+        attributes: [
+          'uuid',
+          'name',
+          'serviceType',
+          'img',
+        ],
+      },
       order: [
         ['status', 'DESC'],
         ['createdAt', 'DESC'],

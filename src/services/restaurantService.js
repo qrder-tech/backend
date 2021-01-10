@@ -600,7 +600,18 @@ const DeleteRestaurantItem = (uuid, restaurantUuid) => new Promise(async (resolv
 const GetRestaurantMetrics = (uuid) => new Promise(async (resolve, reject) => {
   try {
     const tables = await GetRestaurantTables(uuid);
-    const tableOrders = tables.map((table) => table.Orders);
+    const orders = (tables.length > 0)
+      ? tables.map((table) => table.Orders)
+      : [await db.Order.findAll({
+        where: {
+          restaurantUuid: uuid,
+          status: {
+            [Op.eq]: 'waiting',
+          },
+        },
+      })];
+
+    console.log(orders);
 
     const services = tables.filter((table) => (table.services)).map((table) => (table.services.map((service) => service.name)));
     const filterService = (serviceName) => services
@@ -623,9 +634,9 @@ const GetRestaurantMetrics = (uuid) => new Promise(async (resolve, reject) => {
       return prev;
     }, null);
 
-    const waitingOrders = tableOrders.map((orderArr) => orderArr.filter((order) => (order.status === 'waiting')).length);
-    const servedOrders = tableOrders.map((orderArr) => orderArr.filter((order) => (order.status === 'served')).length);
-    const mostDelayedOrder = tableOrders
+    const waitingOrders = orders.map((orderArr) => orderArr.filter((order) => (order.status === 'waiting')).length);
+    const servedOrders = orders.map((orderArr) => orderArr.filter((order) => (order.status === 'served')).length);
+    const mostDelayedOrder = orders
       .map((orderArr) => orderArr.reduce((prev, curr) => {
         if (curr.status === 'served') {
           return prev;

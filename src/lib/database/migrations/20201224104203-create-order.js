@@ -11,7 +11,9 @@ module.exports = {
       },
       no: {
         allowNull: false,
+        autoIncrement: true,
         type: Sequelize.INTEGER,
+        unique: true,
       },
       status: {
         allowNull: false,
@@ -53,6 +55,11 @@ module.exports = {
         },
         onUpdate: 'cascade',
         onDelete: 'cascade',
+      },
+      deviceId: {
+        allowNull: true,
+        defaultValue: null,
+        type: Sequelize.INTEGER,
       },
       createdAt: {
         allowNull: false,

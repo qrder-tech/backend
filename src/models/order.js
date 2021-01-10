@@ -28,7 +28,9 @@ module.exports = (sequelize, DataTypes) => {
     },
     no: {
       allowNull: false,
+      autoIncrement: true,
       type: DataTypes.INTEGER,
+      unique: true,
     },
     status: {
       allowNull: false,
@@ -70,6 +72,11 @@ module.exports = (sequelize, DataTypes) => {
       },
       onUpdate: 'cascade',
       onDelete: 'cascade',
+    },
+    deviceId: {
+      allowNull: true,
+      defaultValue: null,
+      type: DataTypes.INTEGER,
     },
   }, {
     sequelize,

@@ -82,7 +82,7 @@ const GetAllOrders = (restaurantUuid, consumerUuid, { scope = 'all' /* start, le
       },
       order: [
         ['status', 'DESC'],
-        ['createdAt', 'DESC'],
+        ['updatedAt', 'DESC'],
       ],
       where: {
         [Op.or]: [
@@ -123,7 +123,9 @@ const GetAllOrders = (restaurantUuid, consumerUuid, { scope = 'all' /* start, le
   }
 });
 
-const CreateOrder = (_restaurantUuid, consumerUuid, { restaurantUuid, tableUuid, items }) => new Promise(async (resolve, reject) => {
+const CreateOrder = (_restaurantUuid, consumerUuid, {
+  restaurantUuid, tableUuid, items, deviceId,
+}) => new Promise(async (resolve, reject) => {
   try {
     if (!items) {
       return reject(constants.errors.MISSING_ARGS);
@@ -183,10 +185,10 @@ const CreateOrder = (_restaurantUuid, consumerUuid, { restaurantUuid, tableUuid,
       const order = await db.sequelize.transaction(async (transaction) => {
         const tempOrder = await db.Order.create({
           uuid: _uuid(),
-          no: 0,
           restaurantUuid: resUuid,
           tableUuid,
           consumerUuid,
+          deviceId,
         }, {
           transaction,
         });
@@ -244,7 +246,7 @@ const CreateOrder = (_restaurantUuid, consumerUuid, { restaurantUuid, tableUuid,
 });
 
 const UpdateOrder = (uuid, restaurantUuid, consumerUuid, {
-  no, status, tableUuid, items,
+  status, tableUuid, items, deviceId,
 }) => new Promise(async (resolve, reject) => {
   try {
     if (!uuid) {
@@ -266,7 +268,6 @@ const UpdateOrder = (uuid, restaurantUuid, consumerUuid, {
     }
 
     if (consumerUuid && tableUuid) {
-      no = undefined;
       status = undefined;
       tableUuid = undefined;
     }
@@ -280,9 +281,9 @@ const UpdateOrder = (uuid, restaurantUuid, consumerUuid, {
         }
 
         await tempOrder.update({
-          no,
           status,
           tableUuid,
+          deviceId,
         }, {
           transaction,
         });

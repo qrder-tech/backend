@@ -100,65 +100,6 @@ const UpdateRestaurantInfo = (uuid, {
   }
 });
 
-const GetRestaurantMetrics = (uuid) => new Promise(async (resolve, reject) => {
-  try {
-    const tables = await db.Table.findAll({
-      attributes: ['status', 'services'],
-      where: {
-        restaurantUuid: uuid,
-      },
-    }).then((entities) => {
-      if (!entities) {
-        return entities;
-      }
-
-      entities.map((entity) => {
-        // convert services
-        if (entity.services) {
-          entity.services = JSON.parse(entity.services);
-        }
-
-        return entity;
-      });
-
-      return entities;
-    });
-
-    const orders = await db.Order.findAll({
-      attributes: ['status'],
-      where: {
-        restaurantUuid: uuid,
-      },
-    });
-
-    const services = tables.filter((table) => (table.services)).map((table) => (table.services.map((service) => service.name)));
-
-    const filterService = (serviceName) => services
-      .map((serviceArr) => serviceArr.filter((service) => (service === serviceName)))
-      .filter((serviceArr) => (serviceArr.length > 0));
-
-    return resolve({
-      tables: {
-        occupied: tables.filter((table) => (table.status === 'occupied')).length,
-        free: tables.filter((table) => (table.status === null)).length,
-        mostDelayedNo: -1,
-      },
-      orders: {
-        waiting: orders.filter((order) => (order.status === 'waiting')).length,
-        served: orders.filter((order) => (order.status === 'served')).length,
-      },
-      services: {
-        waiter: filterService('waiter').length,
-        payment: filterService('payment').length,
-      },
-    });
-  } catch (err) {
-    const e = constants.errors.UNKNOWN;
-    e.extra = err;
-    return reject(e);
-  }
-});
-
 /**
  * Menu Operations
  */
@@ -242,9 +183,11 @@ const GetRestaurantTable = (uuid, restaurantUuid) => new Promise(async (resolve,
               const tempDate = new Date(service.createdAt);
               if (tempDate - entity.dataValues.mostDelayedDate < 0) {
                 entity.dataValues.mostDelayedDate = tempDate;
+                entity.mostDelayedDate = tempDate;
               }
             } else {
               entity.dataValues.mostDelayedDate = new Date(service.createdAt);
+              entity.mostDelayedDate = new Date(service.createdAt);
             }
 
             return service;
@@ -260,9 +203,11 @@ const GetRestaurantTable = (uuid, restaurantUuid) => new Promise(async (resolve,
               const tempDate = new Date(order.createdAt);
               if (tempDate - entity.dataValues.mostDelayedDate < 0) {
                 entity.dataValues.mostDelayedDate = tempDate;
+                entity.mostDelayedDate = tempDate;
               }
             } else {
               entity.dataValues.mostDelayedDate = new Date(order.createdAt);
+              entity.mostDelayedDate = new Date(order.createdAt);
             }
           }
 
@@ -320,9 +265,11 @@ const GetRestaurantTables = (restaurantUuid) => new Promise(async (resolve, reje
                 const tempDate = new Date(service.createdAt);
                 if (tempDate - entity.dataValues.mostDelayedDate < 0) {
                   entity.dataValues.mostDelayedDate = tempDate;
+                  entity.mostDelayedDate = tempDate;
                 }
               } else {
                 entity.dataValues.mostDelayedDate = new Date(service.createdAt);
+                entity.mostDelayedDate = new Date(service.createdAt);
               }
 
               return service;
@@ -338,9 +285,11 @@ const GetRestaurantTables = (restaurantUuid) => new Promise(async (resolve, reje
                 const tempDate = new Date(order.createdAt);
                 if (tempDate - entity.dataValues.mostDelayedDate < 0) {
                   entity.dataValues.mostDelayedDate = tempDate;
+                  entity.mostDelayedDate = tempDate;
                 }
               } else {
                 entity.dataValues.mostDelayedDate = new Date(order.createdAt);
+                entity.mostDelayedDate = new Date(order.createdAt);
               }
             }
 
@@ -638,6 +587,89 @@ const DeleteRestaurantItem = (uuid, restaurantUuid) => new Promise(async (resolv
     }
 
     return resolve();
+  } catch (err) {
+    const e = constants.errors.UNKNOWN;
+    e.extra = err;
+    return reject(e);
+  }
+});
+
+/**
+ * Metric Operations
+ */
+const GetRestaurantMetrics = (uuid) => new Promise(async (resolve, reject) => {
+  try {
+    const tables = await GetRestaurantTables(uuid);
+    const tableOrders = tables.map((table) => table.Orders);
+
+    const services = tables.filter((table) => (table.services)).map((table) => (table.services.map((service) => service.name)));
+    const filterService = (serviceName) => services
+      .map((serviceArr) => serviceArr.filter((service) => (service === serviceName)))
+      .filter((serviceArr) => (serviceArr.length > 0));
+
+    const mostDelayedTable = tables.reduce((prev, curr) => {
+      if (!curr.mostDelayedDate) {
+        return prev;
+      }
+
+      if (!prev) {
+        return curr;
+      }
+
+      if (curr.mostDelayedDate < prev.mostDelayedDate) {
+        return curr;
+      }
+
+      return prev;
+    }, null);
+
+    const waitingOrders = tableOrders.map((orderArr) => orderArr.filter((order) => (order.status === 'waiting')).length);
+    const servedOrders = tableOrders.map((orderArr) => orderArr.filter((order) => (order.status === 'served')).length);
+    const mostDelayedOrder = tableOrders
+      .map((orderArr) => orderArr.reduce((prev, curr) => {
+        if (curr.status === 'served') {
+          return prev;
+        }
+
+        if (!prev) {
+          return curr;
+        }
+
+        if (curr.createdAt < prev.createdAt) {
+          return curr;
+        }
+
+        return prev;
+      }, null))
+      .filter((order) => (order))
+      .reduce((prev, curr) => {
+        if (!prev) {
+          return curr;
+        }
+
+        if (curr.createdAt < prev.createdAt) {
+          return curr;
+        }
+
+        return prev;
+      }, null);
+
+    return resolve({
+      tables: {
+        occupied: tables.filter((table) => (table.status === 'occupied')).length,
+        free: tables.filter((table) => (table.status === null)).length,
+        mostDelayedName: (mostDelayedTable && mostDelayedTable.name) || '',
+      },
+      orders: {
+        waiting: waitingOrders.reduce((a, b) => a + b, 0),
+        served: servedOrders.reduce((a, b) => a + b, 0),
+        mostDelayedNo: (mostDelayedOrder && mostDelayedOrder.no) || 0,
+      },
+      services: {
+        waiter: filterService('waiter').length,
+        payment: filterService('payment').length,
+      },
+    });
   } catch (err) {
     const e = constants.errors.UNKNOWN;
     e.extra = err;

@@ -280,6 +280,55 @@ const UpdateOrder = (uuid, restaurantUuid, consumerUuid, {
           throw constants.errors.ORDER_HAVE_ALREADY_PAID;
         }
 
+        if (tableUuid) {
+          const table = await db.Table.findOne({
+            where: {
+              uuid: tableUuid,
+              restaurantUuid,
+            },
+          }, {
+            transaction,
+          });
+
+          await table.update({
+            status: 'occupied',
+          }, {
+            transaction,
+          });
+
+          const tempTable = await db.Table.findOne({
+            include: {
+              model: db.Order,
+              where: {
+                status: {
+                  [Op.ne]: 'paid',
+                },
+              },
+              required: false,
+            },
+            order: [
+              ['name', 'ASC'],
+            ],
+            where: {
+              uuid: tempOrder.tableUuid,
+              restaurantUuid,
+            },
+          }, {
+            transaction,
+          });
+
+          const leftOrders = tempTable.Orders.filter((order) => order.uuid !== uuid);
+
+          if (leftOrders.length === 0) {
+            await tempTable.update({
+              services: null,
+              status: null,
+            }, {
+              transaction,
+            });
+          }
+        }
+
         await tempOrder.update({
           status,
           tableUuid,
